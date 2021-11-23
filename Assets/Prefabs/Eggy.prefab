@@ -219,7 +219,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5430637246460685787}
-  m_LocalRotation: {x: -0, y: 0.79456437, z: -0, w: 0.60718}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -227,7 +227,7 @@ Transform:
   - {fileID: 5430637247053875200}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 105.228004, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5430637246460685788
 Animator:
   serializedVersion: 3
@@ -261,9 +261,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fighterData: {fileID: 11400000, guid: 27f4c9a652aecd3439075292f583ecfd, type: 2}
   fighterName: 
-  hp: 0
+  maxHp: 0
+  currentHp: 0
   attack: 0
+  currentAttack: 0
   speed: 0
+  currentSpeed: 0
 --- !u!1 &5430637246521023129
 GameObject:
   m_ObjectHideFlags: 0

@@ -408,6 +408,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1108634464853610381, guid: 9315d08d6d14149438bd82be9881207c,
+        type: 3}
+      propertyPath: fighterName
+      value: Chikii
+      objectReference: {fileID: 0}
     - target: {fileID: 5430637246460685787, guid: 9315d08d6d14149438bd82be9881207c,
         type: 3}
       propertyPath: m_Name
@@ -475,12 +480,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9315d08d6d14149438bd82be9881207c, type: 3}
---- !u!1 &165564061 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5430637246460685787, guid: 9315d08d6d14149438bd82be9881207c,
+--- !u!114 &165564062 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -1108634464853610381, guid: 9315d08d6d14149438bd82be9881207c,
     type: 3}
   m_PrefabInstance: {fileID: 90854162}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098271d5904c694468e5b5bb7fb85fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &328484236
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,10 +808,11 @@ MonoBehaviour:
   - {fileID: 11989205}
   - {fileID: 1134406033}
   heroFighters:
-  - {fileID: 1392759492}
-  - {fileID: 165564061}
+  - {fileID: 1392759493}
+  - {fileID: 165564062}
   enemyFighters:
-  - {fileID: 1188392737}
+  - {fileID: 1188392738}
+  fighterSequence: []
 --- !u!4 &424119345
 Transform:
   m_ObjectHideFlags: 0
@@ -1293,6 +1305,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1108634464853610381, guid: 9315d08d6d14149438bd82be9881207c,
+        type: 3}
+      propertyPath: fighterName
+      value: Pupu
+      objectReference: {fileID: 0}
     - target: {fileID: 5430637246460685787, guid: 9315d08d6d14149438bd82be9881207c,
         type: 3}
       propertyPath: m_Name
@@ -1576,7 +1593,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arenaPoint: {fileID: 553390170}
-  speed: 10
+  rotatingAroundSpeed: 10
+  approachingSpeed: 10
   battleSystem: {fileID: 424119344}
   movimentType: 0
 --- !u!1 &1134406029
@@ -1691,14 +1709,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098271d5904c694468e5b5bb7fb85fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fighterData: {fileID: 11400000, guid: 2505e9ed08245204e936513e50df453c, type: 2}
-  fighterName: 
+  fighterData: {fileID: 11400000, guid: 27f4c9a652aecd3439075292f583ecfd, type: 2}
+  originalName: 
+  fighterName: Hyper
   maxHp: 0
   currentHp: 0
   attack: 0
-  currentAttack: 0
   speed: 0
-  currentSpeed: 0
 --- !u!1 &1333529471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,12 +1809,18 @@ Transform:
   m_Father: {fileID: 1428010610}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!1 &1392759492 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5430637246460685787, guid: 9315d08d6d14149438bd82be9881207c,
+--- !u!114 &1392759493 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -1108634464853610381, guid: 9315d08d6d14149438bd82be9881207c,
     type: 3}
   m_PrefabInstance: {fileID: 768347297}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098271d5904c694468e5b5bb7fb85fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1399216580
 GameObject:
   m_ObjectHideFlags: 0

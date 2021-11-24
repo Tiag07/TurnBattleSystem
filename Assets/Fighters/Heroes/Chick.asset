@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e852a8233d117604aaeeaee98046d50f, type: 3}
   m_Name: Chick
   m_EditorClassIdentifier: 
-  fighterName: Chick
-  hp: 20
-  attack: 6
-  speed: 8
+  baseName: Chick
+  baseHp: 20
+  baseAttack: 7
+  baseSpeed: 8
   fighterClass: 0
   fighterModelPrefab: {fileID: 5430637246460685787, guid: 9315d08d6d14149438bd82be9881207c,
     type: 3}

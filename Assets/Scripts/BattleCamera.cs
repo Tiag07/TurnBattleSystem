@@ -5,11 +5,12 @@ using UnityEngine;
 public class BattleCamera : MonoBehaviour
 {
     [SerializeField] Transform arenaPoint;
-    [SerializeField] float speed = 10;
+    [SerializeField] float rotatingAroundSpeed = 10f;
+    [SerializeField] float approachingSpeed = 10f;
     [SerializeField] BattleSystem battleSystem;
     public enum MovimentType
     {
-        rotateAround, focus, idle,
+        rotateAround, focus, idle, approaching,
     }
     public MovimentType movimentType;
     Transform fighterToFocus;
@@ -23,9 +24,9 @@ public class BattleCamera : MonoBehaviour
     IEnumerator CameraBehaviorLoops()
     {
         PreparingRotateAroundCamera();
-        yield return new WaitForSeconds(10f);
-        PreparingFocusOnAFighter();
         yield return new WaitForSeconds(3f);
+        PreparingFocusOnAFighter();
+        yield return new WaitForSeconds(5f);
         StartCoroutine(CameraBehaviorLoops());
     }
     void LateUpdate()
@@ -33,7 +34,11 @@ public class BattleCamera : MonoBehaviour
         switch (movimentType)
         {
             case MovimentType.rotateAround:
-                transform.RotateAround(arenaPoint.position, Vector3.up, speed * Time.deltaTime);
+                transform.RotateAround(arenaPoint.position, Vector3.up, rotatingAroundSpeed * Time.deltaTime);
+                break;
+
+            case MovimentType.approaching:
+                transform.position += -transform.forward * 0.5f *Time.deltaTime; 
                 break;
 
             case MovimentType.idle:
@@ -56,7 +61,7 @@ public class BattleCamera : MonoBehaviour
         Vector3 offset = transform.forward * 2 + transform.up;
         transform.position = fighterToFocus.position + offset;
         transform.LookAt(fighterToFocus);
-        movimentType = MovimentType.idle;
+        movimentType = MovimentType.approaching;
     }
 
     void GetFighterToFocus()

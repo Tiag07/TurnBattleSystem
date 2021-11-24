@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e852a8233d117604aaeeaee98046d50f, type: 3}
   m_Name: Kiwi
   m_EditorClassIdentifier: 
-  fighterName: Kiwi
-  hp: 18
-  attack: 5
-  speed: 7
-  fighterClass: 0
-  fighterModelPrefab: {fileID: 8993914928567394005, guid: bfff1ec7e30488f45a68b900bcfe581d,
+  baseName: Kiwi
+  baseHp: 18
+  baseAttack: 5
+  baseSpeed: 2
+  fighterClass: 2
+  fighterModelPrefab: {fileID: 9010473483046479362, guid: 5ebebe1dcb1834d49a22e1164224d41f,
     type: 3}

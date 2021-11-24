@@ -3,10 +3,10 @@
 [CreateAssetMenu(fileName = "New Fighter")]
 public class FighterData : ScriptableObject
 {
-    public string fighterName;
-    public int hp;
-    public int attack;
-    public int speed;
+    public string baseName;
+    public int baseHp;
+    public int baseAttack;
+    public int baseSpeed;
     public enum FighterClass
     {
         Warrior, Mage, Assassin, Tank

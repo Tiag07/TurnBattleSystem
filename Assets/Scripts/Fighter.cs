@@ -5,18 +5,18 @@ using UnityEngine;
 public class Fighter : MonoBehaviour 
 {
     [SerializeField] FighterData fighterData;
-    [SerializeField] private string originalName;
-    [SerializeField] private string fighterName;
-    [SerializeField] private int maxHp;
-    [SerializeField] private int currentHp;
-    [SerializeField] private int attack;
-    [SerializeField] public int speed /*{ get; private set; }*/;
+    [SerializeField] public string originalName { get; private set; }
+    [SerializeField] public string nickName;
+    [SerializeField] public int maxHp { get; private set; }
+    [SerializeField] public int currentHp { get; private set; }
+    [SerializeField] public int attack { get; private set; }
+    [SerializeField] public int speed { get; private set; }
     void Start()
     {
-        RefreshData();
+        //RefreshData();
     }
 
-    void RefreshData()
+    public void RefreshStats()
     {
         originalName = fighterData.baseName;
         maxHp = fighterData.baseHp;

@@ -19,7 +19,9 @@ namespace BattleSystem
             battleCamera = FindObjectOfType<BattleCamera>();
 
             battleManager.fightersOrderSorted += battleInterface.OnFightersOrderSorted;
+            battleManager.battleStarted += battleInterface.OnFightStarted;
             battleManager.battleStarted += battleCamera.StartCameraBehavior;
+            
         }
         
     }

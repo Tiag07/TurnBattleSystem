@@ -11,6 +11,7 @@ public class Fighter : MonoBehaviour
     [SerializeField] public int currentHp { get; private set; }
     [SerializeField] public int attack { get; private set; }
     [SerializeField] public int speed { get; private set; }
+    public bool isDead = false;
     void Start()
     {
         //RefreshData();

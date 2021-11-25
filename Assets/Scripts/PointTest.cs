@@ -8,16 +8,17 @@ public class PointTest : MonoBehaviour
     [SerializeField] Vector3 pos;
     void Start()
     {
+        RefreshArenaCenterPoint();
+    }
+
+    public void RefreshArenaCenterPoint()
+    {
         for (int i = 0; i < obj.Length; i++)
         {
             pos += obj[i].position;
         }
         pos /= obj.Length;
-    }
 
-    // Update is called once per frame
-    void Update()
-    {      
         transform.position = pos;
     }
 }

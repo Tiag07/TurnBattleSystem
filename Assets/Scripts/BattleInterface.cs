@@ -9,10 +9,14 @@ namespace BattleSystem
     public class BattleInterface : MonoBehaviour
     {
         [SerializeField] TMP_Text txtFightersSequence;
+        [SerializeField] Button btnStartBattle;
+        [SerializeField] GameObject pnlChooseAction;
 
         public void Start()
         {
             txtFightersSequence.enabled = false;
+            pnlChooseAction.SetActive(false);
+            btnStartBattle.gameObject.SetActive(true);
         }
         public void OnFightersOrderSorted(List<Fighter> fighters)
         {
@@ -22,6 +26,12 @@ namespace BattleSystem
                 txtFightersSequence.text += fighter.nickName + "<br>";
             }
             txtFightersSequence.enabled = true;
+        }
+
+        public void OnFightStarted()
+        {
+            btnStartBattle.gameObject.SetActive(false);
+            pnlChooseAction.SetActive(true);
         }
     }
 }

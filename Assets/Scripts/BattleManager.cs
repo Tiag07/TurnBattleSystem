@@ -12,7 +12,7 @@ namespace BattleSystem
         [SerializeField] Transform[] heroSpots, enemySpots;
         [SerializeField] List<Fighter> heroFighters;
         [SerializeField] List<Fighter> enemyFighters;
-        [SerializeField] List<Fighter> fighterSequence;
+        [SerializeField] List<Fighter> fightersOrder;
         public List<Fighter> GetListWithAllFighters(List<Fighter> heroes, List<Fighter> enemies)
         {
             List<Fighter> allFightersList = new List<Fighter>();
@@ -39,6 +39,7 @@ namespace BattleSystem
         public event Action<List<Fighter>> fightersOrderSorted;
         public event Action battleStarted;
 
+        [SerializeField] Fighter fighterTurn;
         void Start()
         {
             //StartBattleTest(heroFighters, enemyFighters);
@@ -53,7 +54,7 @@ namespace BattleSystem
             SetFightersPosition(heroes, enemies);
             SetFightersLookRotation(heroes, enemies);
             SetFightersLookRotation(enemies, heroes);
-            SortFightersOrder(heroes, enemies);
+            InitialFightersOrderSort(heroes, enemies);
 
             battleStarted?.Invoke();
         }
@@ -111,13 +112,11 @@ namespace BattleSystem
                 observers[i].transform.LookAt(enemyDirection);
             }
         }
-
-
-        public void SortFightersOrder(List<Fighter> heroes, List<Fighter> enemies)
+        public void InitialFightersOrderSort(List<Fighter> heroes, List<Fighter> enemies)
         {
             List<Fighter> allFightersList = GetListWithAllFighters(heroes, enemies);
             Fighter fastestFighter;
-            List<Fighter> newFighterOrder = new List<Fighter>();
+            List<Fighter> newFightersOrder = new List<Fighter>();
 
             while (allFightersList.Count > 0)
             {
@@ -127,12 +126,34 @@ namespace BattleSystem
                     if (fighter.speed > fastestFighter.speed)
                         fastestFighter = fighter;
                 }
-                newFighterOrder.Add(fastestFighter);
+                newFightersOrder.Add(fastestFighter);
                 allFightersList.Remove(fastestFighter);
             }
-
-            fightersOrderSorted?.Invoke(newFighterOrder);
+            fightersOrder = new List<Fighter>(newFightersOrder);
+            fightersOrderSorted?.Invoke(newFightersOrder);
         }
+
+        public void SwitchFighterTurn()
+        {
+            int deadHeroes = 0;
+            int deadenemies = 0;
+            Fighter fighterWhoEndedHisTurn = fightersOrder[0];
+            fightersOrder.Remove(fighterWhoEndedHisTurn);
+            fightersOrder.Add(fighterWhoEndedHisTurn);
+            fightersOrderSorted?.Invoke(fightersOrder);
+
+            foreach (Fighter hero in heroFighters)
+                if (hero.isDead) deadHeroes += 1;
+
+            foreach (Fighter enemy in enemyFighters)
+                if (enemy.isDead) deadenemies += 1;
+
+            if (deadHeroes == heroFighters.Count) LoseBattle();
+            if (deadenemies == heroFighters.Count) winBattle();
+        }
+
+        void LoseBattle() { }
+        void winBattle() { }
 
     }
 }

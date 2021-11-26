@@ -14,14 +14,13 @@ namespace BattleSystem
 
         void Awake()
         {
-            battleManager = FindObjectOfType<BattleManager>();
-            battleInterface = FindObjectOfType<BattleInterface>();
+            battleManager = GetComponent<BattleManager>();
+            battleInterface = GetComponent<BattleInterface>();
             battleCamera = FindObjectOfType<BattleCamera>();
 
             battleManager.fightersOrderSorted += battleInterface.OnFightersOrderSorted;
-            battleManager.battleStarted += battleInterface.OnFightStarted;
+            battleManager.controlledFighterTurn += battleInterface.EnableOrDisableControlUI;
             battleManager.battleStarted += battleCamera.StartCameraBehavior;
-            
         }
         
     }

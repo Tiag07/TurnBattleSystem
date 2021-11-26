@@ -7,10 +7,12 @@ public class Fighter : MonoBehaviour
     [SerializeField] FighterData fighterData;
     [SerializeField] public string originalName { get; private set; }
     [SerializeField] public string nickName;
+    [SerializeField] public string currentLevel;
     [SerializeField] public int maxHp { get; private set; }
     [SerializeField] public int currentHp { get; private set; }
     [SerializeField] public int attack { get; private set; }
     [SerializeField] public int speed { get; private set; }
+    public bool autoControl = false;
     public bool isDead = false;
     void Start()
     {

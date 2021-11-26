@@ -38,14 +38,22 @@ namespace BattleSystem
 
         public event Action<List<Fighter>> fightersOrderSorted;
         public event Action battleStarted;
+        public event Action<bool> controlledFighterTurn;
 
-        [SerializeField] Fighter fighterTurn;
+        [SerializeField] Fighter currentFighter;
+
+        public enum CurrentAttackAllowedTargets
+        {
+            onlyAllies, onlyEnemies, allFighters
+        } 
+        CurrentAttackAllowedTargets currentAttackAllowedTargets;
         void Start()
         {
             //StartBattleTest(heroFighters, enemyFighters);
         }
         public void StartBattle( )
         {
+            fightersOrderSorted += RefreshCurrentFighter;
             List<Fighter> heroes = heroFighters;
             List<Fighter> enemies = enemyFighters;
 
@@ -55,8 +63,10 @@ namespace BattleSystem
             SetFightersLookRotation(heroes, enemies);
             SetFightersLookRotation(enemies, heroes);
             InitialFightersOrderSort(heroes, enemies);
-
+  
             battleStarted?.Invoke();
+
+            StartTurn();
         }
         void EnableFighters(List<Fighter> heroes, List<Fighter> enemies)
         {
@@ -131,9 +141,35 @@ namespace BattleSystem
             }
             fightersOrder = new List<Fighter>(newFightersOrder);
             fightersOrderSorted?.Invoke(newFightersOrder);
-        }
 
-        public void SwitchFighterTurn()
+        }
+        void RefreshCurrentFighter(List<Fighter> fighters) => currentFighter = fighters[0];
+
+        void StartTurn()
+        {
+            if (heroFighters.Contains(currentFighter))
+            {
+                print("Turno do herói");
+                if(currentFighter.autoControl == false)
+                {
+                    controlledFighterTurn?.Invoke(true);
+                } else controlledFighterTurn?.Invoke(false);
+
+            }
+
+            if (enemyFighters.Contains(currentFighter)) 
+            {
+                print("Turno do Inimigo");
+                controlledFighterTurn?.Invoke(false);
+            } 
+            
+            
+        }
+        public void Button_Attack()
+        {
+            SkipFighterTurn();
+        }
+        public void SkipFighterTurn()
         {
             int deadHeroes = 0;
             int deadenemies = 0;
@@ -141,6 +177,7 @@ namespace BattleSystem
             fightersOrder.Remove(fighterWhoEndedHisTurn);
             fightersOrder.Add(fighterWhoEndedHisTurn);
             fightersOrderSorted?.Invoke(fightersOrder);
+            StartTurn();
 
             foreach (Fighter hero in heroFighters)
                 if (hero.isDead) deadHeroes += 1;
@@ -150,6 +187,7 @@ namespace BattleSystem
 
             if (deadHeroes == heroFighters.Count) LoseBattle();
             if (deadenemies == heroFighters.Count) winBattle();
+            
         }
 
         void LoseBattle() { }

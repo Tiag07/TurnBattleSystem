@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 5430637246460685788}
   - component: {fileID: -1108634464853610381}
   m_Layer: 0
-  m_Name: Eggy
+  m_Name: Pupu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -260,13 +260,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fighterData: {fileID: 11400000, guid: 27f4c9a652aecd3439075292f583ecfd, type: 2}
-  fighterName: 
-  maxHp: 0
-  currentHp: 0
-  attack: 0
-  currentAttack: 0
-  speed: 0
-  currentSpeed: 0
+  nickName: Pupu
+  currentLevel: 
+  autoControl: 0
+  isDead: 0
 --- !u!1 &5430637246521023129
 GameObject:
   m_ObjectHideFlags: 0

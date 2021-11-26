@@ -28,7 +28,10 @@ namespace BattleSystem
             txtFightersSequence.text = string.Concat("<color=",titleColorHex,">Order:</color><br>");
             foreach(Fighter fighter in fighters)
             {
-                txtFightersSequence.text += string.Concat(fighter.nickName, " <color=", titleColorHex, ">", fighter.currentHp, "/", fighter.currentHp, "</color>",  "<br>");
+                txtFightersSequence.text += string.Concat(fighter.nickName);
+                txtFightersSequence.text += string.Concat(" <color=", titleColorHex, ">Lv. </color>", fighter.currentLevel);
+                txtFightersSequence.text += string.Concat(" <color=", titleColorHex, ">HP: </color>", fighter.currentHp, "/", fighter.maxHp);
+                txtFightersSequence.text += "<br>";
             }
             txtFightersSequence.enabled = true;
 

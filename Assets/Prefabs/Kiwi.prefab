@@ -478,6 +478,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9010473483046479388}
   - component: {fileID: 9010473483046479389}
+  - component: {fileID: 4383245819592156743}
+  - component: {fileID: 5582135284127610131}
   m_Layer: 0
   m_Name: Kiwi
   m_TagString: Untagged
@@ -492,15 +494,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9010473483046479362}
-  m_LocalRotation: {x: -0, y: 0.7867917, z: -0, w: 0.6172186}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 2.3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 9010473482314322244}
   - {fileID: 9010473483231145561}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 103.773, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &9010473483046479389
 Animator:
   serializedVersion: 3
@@ -520,6 +522,36 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4383245819592156743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9010473483046479362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098271d5904c694468e5b5bb7fb85fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fighterData: {fileID: 11400000, guid: 2505e9ed08245204e936513e50df453c, type: 2}
+  nickName: Hyper
+  currentLevel: 15
+  autoControl: 0
+  isDead: 0
+--- !u!65 &5582135284127610131
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9010473483046479362}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7313428, y: 1.0717858, z: 0.6861812}
+  m_Center: {x: 0.000000014901161, y: 0.5186208, z: -0.006579697}
 --- !u!1 &9010473483154221616
 GameObject:
   m_ObjectHideFlags: 0

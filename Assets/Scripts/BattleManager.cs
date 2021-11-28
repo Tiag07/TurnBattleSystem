@@ -38,19 +38,29 @@ namespace BattleSystem
 
         public event Action<List<Fighter>> fightersOrderSorted;
         public event Action battleStarted;
-        public event Action<bool> controlledFighterTurn;
+        public event Action controlledFighterTurn;
+        public event Action nonControlledFighterTurn;
+        public event Action actionAttackSelected;
+        public event Action backToChooseActionSelected;
+        public event Action targetingEnded;
 
         [SerializeField] Fighter currentFighter;
-
-        public enum CurrentAttackAllowedTargets
-        {
-            onlyAllies, onlyEnemies, allFighters
-        } 
-        CurrentAttackAllowedTargets currentAttackAllowedTargets;
-        void Start()
-        {
-            //StartBattleTest(heroFighters, enemyFighters);
-        }
+        [SerializeField] TargetSystem targetSystem;
+        //public enum CurrentAttackAllowedTargets
+        //{
+        //    onlyAllies, onlyEnemies, allFighters
+        //} 
+        //CurrentAttackAllowedTargets currentAttackAllowedTargets;
+        //public enum BattleState
+        //{
+        //   choosingAction, choosingAtkTarget
+        //}
+        //BattleState battleState = BattleState.choosingAction;
+        
+        //void Start()
+        //{
+        //    StartBattle();
+        //}
         public void StartBattle( )
         {
             fightersOrderSorted += RefreshCurrentFighter;
@@ -149,28 +159,49 @@ namespace BattleSystem
         {
             if (heroFighters.Contains(currentFighter))
             {
-                print("Turno do herói");
+                print("Hero's turn");
                 if(currentFighter.autoControl == false)
                 {
-                    controlledFighterTurn?.Invoke(true);
-                } else controlledFighterTurn?.Invoke(false);
+                    controlledFighterTurn?.Invoke();
+                } else nonControlledFighterTurn?.Invoke();
 
             }
 
             if (enemyFighters.Contains(currentFighter)) 
             {
-                print("Turno do Inimigo");
-                controlledFighterTurn?.Invoke(false);
+                print("Enemy's turn");
+                nonControlledFighterTurn?.Invoke();
             } 
             
             
         }
+        public void Button_BackToChooseAction()
+        {
+            backToChooseActionSelected?.Invoke();
+            targetingEnded?.Invoke();
+        }
         public void Button_Attack()
         {
-            SkipFighterTurn();
+            print(currentFighter + " will attack");
+            actionAttackSelected?.Invoke();
         }
+        public void ValidateTargetForAttack(Fighter fighterTargeted)
+        {
+            if (heroFighters.Contains(fighterTargeted))
+            {
+                print("Invalid Target");
+            }
+            if (enemyFighters.Contains(fighterTargeted))
+            {
+                print("Valid Target");
+                fighterTargeted.TakeDamage(currentFighter.attack);
+                SkipFighterTurn();
+            }
+        }
+
         public void SkipFighterTurn()
         {
+            targetingEnded?.Invoke();
             int deadHeroes = 0;
             int deadenemies = 0;
             Fighter fighterWhoEndedHisTurn = fightersOrder[0];

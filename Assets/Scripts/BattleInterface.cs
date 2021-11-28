@@ -10,8 +10,11 @@ namespace BattleSystem
     {
         [SerializeField] TMP_Text txtFightersSequence;
         [SerializeField] TMP_Text txtCurrentFighter;
+        [SerializeField] TMP_Text txtChooseTarget;
+
         [SerializeField] Button btnStartTurn, btnSkipTurn;
         [SerializeField] GameObject pnlChooseAction;
+        [SerializeField] GameObject pnlChooseTarget;
         [SerializeField] Color titleColor;
         string titleColorHex;
 
@@ -44,21 +47,30 @@ namespace BattleSystem
             txtCurrentFighter.text = string.Concat("<color=", titleColorHex, ">Fighter Turn:</color><br>", currentFighter.nickName);
             txtCurrentFighter.text += string.Concat("<br><color=", titleColorHex, ">HP:</color><br>", currentFighter.maxHp, "/", currentFighter.currentHp);
         }
-
-        public void EnableOrDisableControlUI(bool controlledFighterTurn)
+        public void CloseAllInterfaces()
         {
-            if (controlledFighterTurn)
-            {
-                btnStartTurn.gameObject.SetActive(false);
-                pnlChooseAction.SetActive(true);
-                btnSkipTurn.gameObject.SetActive(false);
-            }
-            else
-            {
-                pnlChooseAction.SetActive(false);
-                btnSkipTurn.gameObject.SetActive(true);
-            }
-            
+            btnStartTurn.gameObject.SetActive(false);
+            btnSkipTurn.gameObject.SetActive(false);
+            pnlChooseAction.SetActive(false);
+            pnlChooseTarget.SetActive(false);
+        }
+
+        public void EnableChooseAction()
+        {
+            CloseAllInterfaces();
+            pnlChooseAction.SetActive(true);
+        }
+        public void EnableWaitTurn()
+        {
+            CloseAllInterfaces();
+            btnSkipTurn.gameObject.SetActive(true);
+        }
+
+        public void EnableChooseTargetInterface()
+        {
+            CloseAllInterfaces();
+
+            pnlChooseTarget.SetActive(true);
         }
 
     }

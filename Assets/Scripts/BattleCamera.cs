@@ -74,7 +74,7 @@ namespace BattleSystem
             fighterToFocus = battleSystem.RandomFighter;
 
             transform.rotation = fighterToFocus.rotation;
-            Vector3 offset = transform.forward * 2 + transform.up;
+            Vector3 offset = (transform.forward * 2) + transform.up;
             transform.position = fighterToFocus.position + offset;
             transform.LookAt(fighterToFocus);
             movimentType = MovimentType.approaching;

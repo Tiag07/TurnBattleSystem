@@ -46,21 +46,21 @@ namespace BattleSystem
 
         [SerializeField] Fighter currentFighter;
         [SerializeField] TargetSystem targetSystem;
-        public enum CurrentAttackAllowedTargets
-        {
-            onlyAllies, onlyEnemies, allFighters
-        } 
-        CurrentAttackAllowedTargets currentAttackAllowedTargets;
-        public enum BattleState
-        {
-           choosingAction, choosingAtkTarget
-        }
-        BattleState battleState = BattleState.choosingAction;
+        //public enum CurrentAttackAllowedTargets
+        //{
+        //    onlyAllies, onlyEnemies, allFighters
+        //} 
+        //CurrentAttackAllowedTargets currentAttackAllowedTargets;
+        //public enum BattleState
+        //{
+        //   choosingAction, choosingAtkTarget
+        //}
+        //BattleState battleState = BattleState.choosingAction;
         
-        void Start()
-        {
-            //StartBattleTest(heroFighters, enemyFighters);
-        }
+        //void Start()
+        //{
+        //    StartBattle();
+        //}
         public void StartBattle( )
         {
             fightersOrderSorted += RefreshCurrentFighter;

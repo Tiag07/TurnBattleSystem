@@ -28,11 +28,15 @@ namespace BattleSystem
 
             battleManager.actionAttackSelected += battleInterface.EnableChooseTargetInterface;
             battleManager.actionAttackSelected += targetSystem.EnableTarget;
+            battleManager.actionAttackSelected += battleCamera.GeneralVision;
 
             battleManager.targetingEnded += targetSystem.DisableTarget;
+            battleManager.targetingEnded += battleCamera.StartCameraBehavior;
             battleManager.backToChooseActionSelected += battleInterface.EnableChooseAction;
+            battleManager.backToChooseActionSelected += battleCamera.StartCameraBehavior;
 
             targetSystem.targetSelected += battleManager.ValidateTargetForAttack;
+
         }
         
     }

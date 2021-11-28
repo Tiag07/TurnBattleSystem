@@ -9,7 +9,10 @@ namespace BattleSystem
         [SerializeField] Transform arenaPoint;
         [SerializeField] float rotatingAroundSpeed = 10f;
         [SerializeField] float approachingSpeed = 10f;
+        [SerializeField] Transform generalVisionPoint;
+        [SerializeField] Transform[] middleCameraPoints;
         [SerializeField] BattleManager battleSystem;
+        
         public enum MovimentType
         {
             idle, rotateAround, focus, approaching,
@@ -20,17 +23,18 @@ namespace BattleSystem
         Coroutine cameraBehaviorLoop;
         public void StartCameraBehavior()
         {
-            if(cameraBehaviorLoop == null)
-           cameraBehaviorLoop = StartCoroutine(CameraBehaviorLoops());
+                cameraBehaviorLoop = StartCoroutine(CameraBehaviorLoops());
         }
 
         IEnumerator CameraBehaviorLoops()
         {
-            PreparingRotateAroundCamera();
-            yield return new WaitForSeconds(3f);
-            //PreparingFocusOnAFighter();
-            yield return new WaitForSeconds(5f);
-            StartCoroutine(CameraBehaviorLoops());
+            while (true)
+            {
+                PreparingRotateAroundCamera();
+                yield return new WaitForSeconds(3f);
+                PreparingFocusOnAFighter();
+                yield return new WaitForSeconds(5f);
+            }
         }
         void LateUpdate()
         {
@@ -49,17 +53,26 @@ namespace BattleSystem
             }
 
         }
+
+        public void GeneralVision()
+        {
+            transform.position = generalVisionPoint.position;
+            transform.rotation = generalVisionPoint.rotation;
+            StopAllCoroutines();
+            movimentType = MovimentType.idle;
+        }
         void PreparingRotateAroundCamera()
         {
-            Vector3 offset = new Vector3(4.3f, 1.1f, -1.4f);
-            transform.position = arenaPoint.position + offset;
+            int randomCameraPoint = Random.Range(0, middleCameraPoints.Length);
+            transform.position = middleCameraPoints[randomCameraPoint].position;
             transform.LookAt(arenaPoint);
             movimentType = MovimentType.rotateAround;
 
         }
         void PreparingFocusOnAFighter()
         {
-            GetFighterToFocus();
+            fighterToFocus = battleSystem.RandomFighter;
+
             transform.rotation = fighterToFocus.rotation;
             Vector3 offset = transform.forward * 2 + transform.up;
             transform.position = fighterToFocus.position + offset;
@@ -67,9 +80,5 @@ namespace BattleSystem
             movimentType = MovimentType.approaching;
         }
 
-        void GetFighterToFocus()
-        {
-            fighterToFocus = battleSystem.RandomFighter;
-        }
     }
 }

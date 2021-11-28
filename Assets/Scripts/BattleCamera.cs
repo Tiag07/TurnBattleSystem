@@ -28,7 +28,7 @@ namespace BattleSystem
         {
             PreparingRotateAroundCamera();
             yield return new WaitForSeconds(3f);
-            PreparingFocusOnAFighter();
+            //PreparingFocusOnAFighter();
             yield return new WaitForSeconds(5f);
             StartCoroutine(CameraBehaviorLoops());
         }

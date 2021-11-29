@@ -15,7 +15,7 @@ namespace BattleSystem
         [SerializeField] Color heroTargetColor, enemyTargetColor;
         [SerializeField] Transform currentTarget;
 
-        public event Action<Fighter> targetSelected;
+        public event Action<Fighter> onTargetSelected;
         void Start()
         {
             mainCamera = Camera.main;
@@ -37,13 +37,13 @@ namespace BattleSystem
             if (Physics.Raycast(ray, out hit, 100f, fightersLayer))
             {
                 if (currentTarget != hit.transform)
-                {
-                    ptcfighterTargeted.transform.position = hit.transform.position;
+                { 
                     ptcfighterTargeted.transform.localScale = hit.transform.localScale;
                     currentTarget = hit.transform;
                 }
                 if (ptcfighterTargeted.gameObject.activeSelf == false)
                 {
+                    ptcfighterTargeted.transform.position = hit.transform.position;
                     ptcfighterTargeted.gameObject.SetActive(true);
                     ptcfighterTargeted.Play();
                 }
@@ -57,17 +57,18 @@ namespace BattleSystem
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //print(hit.transform.name);
                 Fighter fighterTargeted = hit.transform.GetComponent<Fighter>();
-                targetSelected?.Invoke(fighterTargeted);
+                onTargetSelected?.Invoke(fighterTargeted);
             }
         }
 
-        public void EnableTarget() => active = true;
-        public void DisableTarget()
+
+        public void EnableTargeting() => active = true;
+        public void DisableTargeting()
         {
             active = false;
             ptcfighterTargeted.gameObject.SetActive(false);
         }
+        
     }
 }

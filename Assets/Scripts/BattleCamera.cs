@@ -71,10 +71,10 @@ namespace BattleSystem
         }
         void PreparingFocusOnAFighter()
         {
-            fighterToFocus = battleSystem.RandomFighter;
+            fighterToFocus = battleSystem.GetRandomFighter;
 
             transform.rotation = fighterToFocus.rotation;
-            Vector3 offset = transform.forward * 2 + transform.up;
+            Vector3 offset = (transform.forward * 2) + transform.up;
             transform.position = fighterToFocus.position + offset;
             transform.LookAt(fighterToFocus);
             movimentType = MovimentType.approaching;

@@ -10,7 +10,7 @@ namespace BattleSystem
     {
         [SerializeField] TMP_Text txtFightersSequence;
         [SerializeField] TMP_Text txtCurrentFighter;
-        [SerializeField] TMP_Text txtChooseTarget;
+        [SerializeField] TMP_Text txtFighterActing;
 
         [SerializeField] Button btnStartTurn, btnSkipTurn;
         [SerializeField] GameObject pnlChooseAction;
@@ -22,8 +22,7 @@ namespace BattleSystem
         {
             titleColorHex = string.Concat("#", ColorUtility.ToHtmlStringRGB(titleColor));
             txtFightersSequence.enabled = false;
-            pnlChooseAction.SetActive(false);
-            btnSkipTurn.gameObject.SetActive(false);
+            CloseAllInterfaces();
             btnStartTurn.gameObject.SetActive(true);
         }
         public void OnFightersOrderSorted(List<Fighter> fighters)
@@ -53,24 +52,51 @@ namespace BattleSystem
             btnSkipTurn.gameObject.SetActive(false);
             pnlChooseAction.SetActive(false);
             pnlChooseTarget.SetActive(false);
+            txtFighterActing.gameObject.SetActive(false);
         }
 
-        public void EnableChooseAction()
-        {
-            CloseAllInterfaces();
-            pnlChooseAction.SetActive(true);
-        }
-        public void EnableWaitTurn()
-        {
-            CloseAllInterfaces();
-            btnSkipTurn.gameObject.SetActive(true);
-        }
 
-        public void EnableChooseTargetInterface()
+        public void RefreshBattleStateInterface(BattleManager.BattleState battleState)
         {
             CloseAllInterfaces();
-
-            pnlChooseTarget.SetActive(true);
+            switch (battleState)
+            {
+                case BattleManager.BattleState.TurnOfControlledFighterStarted:
+                    pnlChooseAction.SetActive(true);
+                    break;
+                case BattleManager.BattleState.TurnOfNonControlledFighterStarted:
+                    btnSkipTurn.gameObject.SetActive(true);
+                    break;
+                case BattleManager.BattleState.MainPhase:
+                    pnlChooseAction.SetActive(true);
+                    break;
+                case BattleManager.BattleState.TargetingAtkPhase:
+                    pnlChooseTarget.SetActive(true);
+                    break;
+                case BattleManager.BattleState.ActionPhase:
+                    txtFighterActing.gameObject.SetActive(true);
+                    break;
+                case BattleManager.BattleState.TargetingItemPhase:
+                    
+                    break;
+                case BattleManager.BattleState.WaitingAttackPhase:
+                    txtFighterActing.gameObject.SetActive(true);
+                    break;
+            }
+        }
+        public void ShowActionMessage(string attacker, BattleManager.ActionMode actionMode, string target, string item)
+        {
+            string actionMessage = "";
+            switch (actionMode)
+            {
+                case BattleManager.ActionMode.attack:
+                    actionMessage = " is attacking ";
+                    break;
+                case BattleManager.ActionMode.item:
+                    actionMessage = string.Concat(" is using ", item, " in ");
+                    break;
+            }
+            txtFighterActing.text = string.Concat(attacker, actionMessage, target);
         }
 
     }

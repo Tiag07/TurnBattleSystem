@@ -37,13 +37,13 @@ namespace BattleSystem
             if (Physics.Raycast(ray, out hit, 100f, fightersLayer))
             {
                 if (currentTarget != hit.transform)
-                {
-                    ptcfighterTargeted.transform.position = hit.transform.position;
+                { 
                     ptcfighterTargeted.transform.localScale = hit.transform.localScale;
                     currentTarget = hit.transform;
                 }
                 if (ptcfighterTargeted.gameObject.activeSelf == false)
                 {
+                    ptcfighterTargeted.transform.position = hit.transform.position;
                     ptcfighterTargeted.gameObject.SetActive(true);
                     ptcfighterTargeted.Play();
                 }
@@ -62,11 +62,13 @@ namespace BattleSystem
             }
         }
 
-        public void EnableTarget() => active = true;
-        public void DisableTarget()
+
+        public void EnableTargeting() => active = true;
+        public void DisableTargeting()
         {
             active = false;
             ptcfighterTargeted.gameObject.SetActive(false);
         }
+        
     }
 }

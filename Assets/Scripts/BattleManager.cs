@@ -21,7 +21,7 @@ namespace BattleSystem
 
             return allFightersList;
         }
-        public Transform RandomFighter
+        public Transform GetRandomFighter
         {
             get
             {
@@ -36,30 +36,28 @@ namespace BattleSystem
         }
 
         public event Action<List<Fighter>> onFightersOrderSorted;
-        public event Action onBattleStarted;
-        public event Action onTurnOfControlledFighterStarted;
-        public event Action onTurnOfNonControlledFighterStarted;
-        public event Action onAttackButtonSelected;
-        public event Action onAttackProcessStarted;
-        public event Action onBackToMainInterfaceSelected;
-        public event Action onTargetingFighterEnded;
+        public event Action onMainPhaseStarted;
+        public event Action<BattleState> onBattleStateChanged;
+        public event Action onTargetingStarted;
+        public enum ActionMode { attack, item }
+        public delegate void ActionProcess(string attacker = "Fighter ", ActionMode actionMode = ActionMode.attack, string target = "Oponent!", string itemName = "Item");
+        public ActionProcess onActionPhase;
+
+        public event Action onTargetingEnded;
+        
 
         [SerializeField] Fighter currentFighter;
-        //public enum CurrentAttackAllowedTargets
-        //{
-        //    onlyAllies, onlyEnemies, allFighters
-        //} 
-        //CurrentAttackAllowedTargets currentAttackAllowedTargets;
-        //public enum BattleState
-        //{
-        //   choosingAction, choosingAtkTarget
-        //}
-        //BattleState battleState = BattleState.choosingAction;
+        public enum BattleState
+        {
+            TurnOfControlledFighterStarted,
+            TurnOfNonControlledFighterStarted,
+            MainPhase,
+            TargetingAtkPhase,            
+            TargetingItemPhase,
+            ActionPhase, 
+            WaitingAttackPhase,
+        }
         
-        //void Start()
-        //{
-        //    StartBattle();
-        //}
         public void StartBattle( )
         {
             onFightersOrderSorted += RefreshCurrentFighter;
@@ -72,8 +70,6 @@ namespace BattleSystem
             SetFightersLookRotation(heroes, enemies);
             SetFightersLookRotation(enemies, heroes);
             InitialFightersOrderSort(heroes, enemies);
-  
-            onBattleStarted?.Invoke();
 
             StartTurn();
         }
@@ -161,28 +157,33 @@ namespace BattleSystem
                 print("Hero's turn");
                 if(currentFighter.autoControl == false)
                 {
-                    onTurnOfControlledFighterStarted?.Invoke();
-                } else onTurnOfNonControlledFighterStarted?.Invoke();
+                    onBattleStateChanged?.Invoke(BattleState.TurnOfControlledFighterStarted);
+                    onMainPhaseStarted?.Invoke();
+                } else onBattleStateChanged?.Invoke(BattleState.TurnOfNonControlledFighterStarted);
 
             }
 
             if (enemyFighters.Contains(currentFighter)) 
             {
                 print("Enemy's turn");
-                onTurnOfNonControlledFighterStarted?.Invoke();
+                onBattleStateChanged?.Invoke(BattleState.TurnOfNonControlledFighterStarted);
             } 
             
             
         }
         public void Button_BackToChooseAction()
         {
-            onBackToMainInterfaceSelected?.Invoke();
-            onTargetingFighterEnded?.Invoke();
+            onBattleStateChanged?.Invoke(BattleState.TurnOfControlledFighterStarted);
+            onTargetingEnded?.Invoke();
+            onMainPhaseStarted?.Invoke();
+
         }
         public void Button_Attack()
         {
             print(currentFighter + " will attack");
-            onAttackButtonSelected?.Invoke();
+            onBattleStateChanged?.Invoke(BattleState.TargetingAtkPhase);
+            onTargetingStarted?.Invoke();
+            
         }
         public void ValidateTargetForAttack(Fighter fighterTargeted)
         {
@@ -198,11 +199,14 @@ namespace BattleSystem
         }
         IEnumerator StartAttackProcess(Fighter fighterTargeted)
         {
-            
+            onTargetingEnded?.Invoke();
+            onActionPhase?.Invoke(currentFighter.nickName, ActionMode.attack ,fighterTargeted.nickName);
+            onBattleStateChanged?.Invoke(BattleState.ActionPhase);
+
             Vector3 originalAttackerPosition = currentFighter.transform.position;
             Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward*2;
             currentFighter.transform.position = spotForAttackOponent;
-            onAttackProcessStarted?.Invoke();
+
             yield return new WaitForSeconds(2f);
             fighterTargeted.TakeDamage(currentFighter.attack);
             yield return new WaitForSeconds(1f);
@@ -212,7 +216,7 @@ namespace BattleSystem
 
         public void SkipFighterTurn()
         {
-            onTargetingFighterEnded?.Invoke();
+            onTargetingEnded?.Invoke();
             int deadHeroes = 0;
             int deadenemies = 0;
             Fighter fighterWhoEndedHisTurn = fightersOrder[0];

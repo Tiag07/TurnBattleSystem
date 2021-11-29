@@ -15,7 +15,7 @@ namespace BattleSystem
         [SerializeField] Color heroTargetColor, enemyTargetColor;
         [SerializeField] Transform currentTarget;
 
-        public event Action<Fighter> targetSelected;
+        public event Action<Fighter> onTargetSelected;
         void Start()
         {
             mainCamera = Camera.main;
@@ -57,9 +57,8 @@ namespace BattleSystem
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //print(hit.transform.name);
                 Fighter fighterTargeted = hit.transform.GetComponent<Fighter>();
-                targetSelected?.Invoke(fighterTargeted);
+                onTargetSelected?.Invoke(fighterTargeted);
             }
         }
 

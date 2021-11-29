@@ -10,7 +10,7 @@ namespace BattleSystem
     {
         [SerializeField] TMP_Text txtFightersSequence;
         [SerializeField] TMP_Text txtCurrentFighter;
-        [SerializeField] TMP_Text txtChooseTarget;
+        [SerializeField] TMP_Text txtFighterIsAttackingOponent;
 
         [SerializeField] Button btnStartTurn, btnSkipTurn;
         [SerializeField] GameObject pnlChooseAction;
@@ -22,8 +22,7 @@ namespace BattleSystem
         {
             titleColorHex = string.Concat("#", ColorUtility.ToHtmlStringRGB(titleColor));
             txtFightersSequence.enabled = false;
-            pnlChooseAction.SetActive(false);
-            btnSkipTurn.gameObject.SetActive(false);
+            CloseAllInterfaces();
             btnStartTurn.gameObject.SetActive(true);
         }
         public void OnFightersOrderSorted(List<Fighter> fighters)
@@ -53,6 +52,7 @@ namespace BattleSystem
             btnSkipTurn.gameObject.SetActive(false);
             pnlChooseAction.SetActive(false);
             pnlChooseTarget.SetActive(false);
+            txtFighterIsAttackingOponent.gameObject.SetActive(false);
         }
 
         public void EnableChooseAction()
@@ -69,8 +69,12 @@ namespace BattleSystem
         public void EnableChooseTargetInterface()
         {
             CloseAllInterfaces();
-
             pnlChooseTarget.SetActive(true);
+        }
+        public void EnableFighterIsAttackingOponentText()
+        {
+            CloseAllInterfaces();
+            txtFighterIsAttackingOponent.gameObject.SetActive(true);
         }
 
     }

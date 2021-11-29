@@ -12,32 +12,55 @@ namespace BattleSystem
         BattleCamera battleCamera;
         TargetSystem targetSystem;
 
-        void Awake()
+        private void Awake()
         {
             battleManager = GetComponent<BattleManager>();
             battleInterface = GetComponent<BattleInterface>();
             battleCamera = FindObjectOfType<BattleCamera>();
             targetSystem = GetComponent<TargetSystem>();
-
-            battleManager.fightersOrderSorted += battleInterface.OnFightersOrderSorted;
-
-            battleManager.controlledFighterTurn += battleInterface.EnableChooseAction;
-            battleManager.nonControlledFighterTurn += battleInterface.EnableWaitTurn;
-
-            battleManager.battleStarted += battleCamera.StartCameraBehavior;
-
-            battleManager.actionAttackSelected += battleInterface.EnableChooseTargetInterface;
-            battleManager.actionAttackSelected += targetSystem.EnableTarget;
-            battleManager.actionAttackSelected += battleCamera.GeneralVision;
-
-            battleManager.targetingEnded += targetSystem.DisableTarget;
-            battleManager.targetingEnded += battleCamera.StartCameraBehavior;
-            battleManager.backToChooseActionSelected += battleInterface.EnableChooseAction;
-            battleManager.backToChooseActionSelected += battleCamera.StartCameraBehavior;
-
-            targetSystem.targetSelected += battleManager.ValidateTargetForAttack;
-
         }
-        
+        void OnEnable()
+        {
+            battleManager.onFightersOrderSorted += battleInterface.OnFightersOrderSorted;
+
+            battleManager.onTurnOfControlledFighterStarted += battleInterface.EnableChooseAction;
+            battleManager.onTurnOfNonControlledFighterStarted += battleInterface.EnableWaitTurn;
+
+            battleManager.onBattleStarted += battleCamera.StartCameraBehavior;
+
+            battleManager.onAttackButtonSelected += battleInterface.EnableChooseTargetInterface;
+            battleManager.onAttackButtonSelected += targetSystem.EnableTarget;
+            battleManager.onAttackButtonSelected += battleCamera.GeneralVision;
+
+            battleManager.onTargetingFighterEnded += targetSystem.DisableTarget;
+            battleManager.onTargetingFighterEnded += battleCamera.StartCameraBehavior;
+            battleManager.onBackToMainInterfaceSelected += battleInterface.EnableChooseAction;
+            battleManager.onBackToMainInterfaceSelected += battleCamera.StartCameraBehavior;
+            battleManager.onAttackProcessStarted += battleInterface.EnableFighterIsAttackingOponentText;
+
+            targetSystem.onTargetSelected += battleManager.ValidateTargetForAttack;
+        }
+
+        void OnDisable()
+        {
+            battleManager.onFightersOrderSorted -= battleInterface.OnFightersOrderSorted;
+
+            battleManager.onTurnOfControlledFighterStarted -= battleInterface.EnableChooseAction;
+            battleManager.onTurnOfNonControlledFighterStarted -= battleInterface.EnableWaitTurn;
+
+            battleManager.onBattleStarted -= battleCamera.StartCameraBehavior;
+
+            battleManager.onAttackButtonSelected -= battleInterface.EnableChooseTargetInterface;
+            battleManager.onAttackButtonSelected -= targetSystem.EnableTarget;
+            battleManager.onAttackButtonSelected -= battleCamera.GeneralVision;
+
+            battleManager.onTargetingFighterEnded -= targetSystem.DisableTarget;
+            battleManager.onTargetingFighterEnded -= battleCamera.StartCameraBehavior;
+            battleManager.onBackToMainInterfaceSelected -= battleInterface.EnableChooseAction;
+            battleManager.onBackToMainInterfaceSelected -= battleCamera.StartCameraBehavior;
+
+            targetSystem.onTargetSelected += battleManager.ValidateTargetForAttack;
+        }
+
     }
 }

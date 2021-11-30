@@ -8,10 +8,12 @@ namespace BattleSystem
 {
     public class BattleManager : MonoBehaviour
     {
+        [SerializeField] Fighter currentFighterTurn;
         [SerializeField] Transform[] heroSpots, enemySpots;
         [SerializeField] List<Fighter> heroFighters;
         [SerializeField] List<Fighter> enemyFighters;
         [SerializeField] List<Fighter> fightersOrder;
+        
         public List<Fighter> GetListWithAllFighters(List<Fighter> heroes, List<Fighter> enemies)
         {
             List<Fighter> allFightersList = new List<Fighter>();
@@ -35,25 +37,22 @@ namespace BattleSystem
             }
         }
 
-        public event Action<List<Fighter>> onFightersOrderSorted;
+        public event Action<List<Fighter>> onFightersOrderOrStatusChanged;
         public event Action onChoosingOrWaitingAction;
         public event Action onControllableTurnStarted;
         public event Action<Fighter> onAutomaticTurnStarted;
         public event Action onAttackButtonSelected;
         public event Action onItemButtonSelected;
         public event Action onTargetingFightersStarted;
+        public event Action onTargetingFightersFinished;
+        public event Action onActionProcessStarted;
         public enum ActionMode { attack, item }
         public delegate void ActionProcess(Fighter attacker = null, Fighter target = null, ActionMode actionMode = ActionMode.attack, string itemName = "Item");
-        public ActionProcess onActionProcessStarted;
-
-        public event Action onTargetingFightersEnded;
-        public event Action onTurnEnded;
-
-        [SerializeField] Fighter currentFighter;
+        public event ActionProcess onFighterActionHappening;
 
         public void StartBattle()
         {
-            onFightersOrderSorted += RefreshCurrentFighter;
+            onFightersOrderOrStatusChanged += RefreshCurrentFighter;
             List<Fighter> heroes = heroFighters;
             List<Fighter> enemies = enemyFighters;
 
@@ -138,44 +137,51 @@ namespace BattleSystem
                 allFightersList.Remove(fastestFighter);
             }
             fightersOrder = new List<Fighter>(newFightersOrder);
-            onFightersOrderSorted?.Invoke(newFightersOrder);
+            onFightersOrderOrStatusChanged?.Invoke(newFightersOrder);
 
         }
-        void RefreshCurrentFighter(List<Fighter> fighters) => currentFighter = fighters[0];
+        void RefreshCurrentFighter(List<Fighter> fighters) => currentFighterTurn = fighters[0];
 
         void StartTurn()
         {
             onChoosingOrWaitingAction?.Invoke();
-            if (heroFighters.Contains(currentFighter))
+            if (heroFighters.Contains(currentFighterTurn))
             {
                 print("Hero's turn");
-                if (currentFighter.autoControl == false)
+                if (currentFighterTurn.autoControl == false)
                     onControllableTurnStarted?.Invoke();
                 else
                 {
                    StartCoroutine(StartAutomaticTurnProcess());
-                    onAutomaticTurnStarted?.Invoke(currentFighter);
                 }
                 return;
             }
-            else if (enemyFighters.Contains(currentFighter))
+            else if (enemyFighters.Contains(currentFighterTurn))
             {
                 print("Enemy's turn");
                 StartCoroutine(StartAutomaticTurnProcess());
-                onAutomaticTurnStarted?.Invoke(currentFighter);
             }
-
-
         }
+        IEnumerator StartAutomaticTurnProcess()
+        {
+            onAutomaticTurnStarted?.Invoke(currentFighterTurn);
+            yield return new WaitForSeconds(2f);
+
+            List<Fighter> targetedTeam = GetTargetTeam(TargetTeam.oponent);
+            Fighter lowerHpTarget = GetLowerHealthFighterFromTeam(targetedTeam);
+           StartCoroutine(StartAttackProcess(lowerHpTarget));
+            print("auto turn end");
+        }
+
         public void Button_BackToChooseAction()
         {
             onControllableTurnStarted?.Invoke();
-            onTargetingFightersEnded?.Invoke();
+            onTargetingFightersFinished?.Invoke();
             onChoosingOrWaitingAction?.Invoke();
         }
         public void Button_Attack()
         {
-            print(currentFighter + " will attack");
+            print(currentFighterTurn + " will attack");
             onAttackButtonSelected?.Invoke();
             onTargetingFightersStarted?.Invoke();
 
@@ -194,35 +200,75 @@ namespace BattleSystem
         }
         IEnumerator StartAttackProcess(Fighter fighterTargeted)
         {
-            onTargetingFightersEnded?.Invoke();
-            onActionProcessStarted?.Invoke(currentFighter, fighterTargeted, ActionMode.attack);
-
-            Vector3 originalAttackerPosition = currentFighter.transform.position;
-            Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward * 2;
-            currentFighter.transform.position = spotForAttackOponent;
-
-            yield return new WaitForSeconds(2f);
-            fighterTargeted.TakeDamage(currentFighter.attack);
+            onTargetingFightersFinished?.Invoke();
+            onActionProcessStarted?.Invoke();
+            onFighterActionHappening?.Invoke(currentFighterTurn, fighterTargeted, ActionMode.attack);
             yield return new WaitForSeconds(1f);
-            currentFighter.transform.position = originalAttackerPosition;
+
+            Vector3 originalAttackerPosition = currentFighterTurn.transform.position;
+            Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward * 2;
+            currentFighterTurn.transform.position = spotForAttackOponent;
+   
+            fighterTargeted.TakeDamage(currentFighterTurn.attack);
+            onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
+            yield return new WaitForSeconds(1f);
+            currentFighterTurn.transform.position = originalAttackerPosition;
+            yield return new WaitForSeconds(1f);
             SkipToNextTurn();
         }
 
-        IEnumerator StartAutomaticTurnProcess()
+
+        enum TargetTeam { ally, oponent }
+        List<Fighter> GetTargetTeam(TargetTeam targetTeam)
         {
-            yield return new WaitForSeconds(2f);
-            SkipToNextTurn();
+            List<Fighter> listForSearch = new List<Fighter>();
+
+            if (heroFighters.Contains(currentFighterTurn))
+            {
+                switch (targetTeam)
+                {
+                    case TargetTeam.ally:
+                        listForSearch = new List<Fighter>(heroFighters);
+                        break;
+                    case TargetTeam.oponent:
+                        listForSearch = new List<Fighter>(enemyFighters);
+                        break;
+                }
+            }
+            else if (enemyFighters.Contains(currentFighterTurn))
+            {
+                switch (targetTeam)
+                {
+                    case TargetTeam.ally:
+                        listForSearch = new List<Fighter>(enemyFighters);
+                        break;
+                    case TargetTeam.oponent:
+                        listForSearch = new List<Fighter>(heroFighters);
+                        break;
+                }
+            }
+            return listForSearch;
+        }
+        Fighter GetLowerHealthFighterFromTeam(List<Fighter> team)
+        {
+            Fighter lowerHpFighter = team[0];
+            foreach(Fighter fighter in team)
+            {
+                if (fighter.currentHp < lowerHpFighter.currentHp)
+                    lowerHpFighter = fighter;
+            }
+            return lowerHpFighter;
         }
 
         public void SkipToNextTurn()
         {
-            onTargetingFightersEnded?.Invoke();
+            onTargetingFightersFinished?.Invoke();
             int deadHeroes = 0;
             int deadenemies = 0;
             Fighter fighterWhoEndedHisTurn = fightersOrder[0];
             fightersOrder.Remove(fighterWhoEndedHisTurn);
             fightersOrder.Add(fighterWhoEndedHisTurn);
-            onFightersOrderSorted?.Invoke(fightersOrder);
+            onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
             StartTurn();
 
             foreach (Fighter hero in heroFighters)

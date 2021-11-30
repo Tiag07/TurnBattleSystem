@@ -21,7 +21,7 @@ namespace BattleSystem
         }
         void OnEnable()
         {
-            battleManager.onFightersOrderSorted += battleInterface.RefreshFightersOrderListInterface;
+            battleManager.onFightersOrderOrStatusChanged += battleInterface.RefreshFightersOrderListInterface;
 
             battleManager.onControllableTurnStarted += battleInterface.ShowControllableTurnInterface;
             battleManager.onAutomaticTurnStarted += battleInterface.ShowAutomaticTurnInterface;
@@ -33,8 +33,11 @@ namespace BattleSystem
             battleManager.onTargetingFightersStarted += targetSystem.EnableTargeting;
             battleManager.onTargetingFightersStarted += battleCamera.GeneralVision;
 
-            battleManager.onTargetingFightersEnded += targetSystem.DisableTargeting;
-            battleManager.onActionProcessStarted += battleInterface.ShowFighterActingMessage;
+            battleManager.onTargetingFightersFinished += targetSystem.DisableTargeting;
+
+            battleManager.onActionProcessStarted += battleCamera.GeneralVision;
+
+            battleManager.onFighterActionHappening += battleInterface.ShowFighterActingMessage;
 
             targetSystem.onTargetSelected += battleManager.ValidateTargetForAttack;
         }

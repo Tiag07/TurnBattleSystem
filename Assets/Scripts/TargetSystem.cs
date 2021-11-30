@@ -36,17 +36,14 @@ namespace BattleSystem
 
             if (Physics.Raycast(ray, out hit, 100f, fightersLayer))
             {
-                if (currentTarget != hit.transform)
-                { 
+                
                     ptcfighterTargeted.transform.localScale = hit.transform.localScale;
                     currentTarget = hit.transform;
-                }
-                if (ptcfighterTargeted.gameObject.activeSelf == false)
-                {
+                
                     ptcfighterTargeted.transform.position = hit.transform.position;
                     ptcfighterTargeted.gameObject.SetActive(true);
                     ptcfighterTargeted.Play();
-                }
+                
 
                 SelectingTarget(hit);
             }

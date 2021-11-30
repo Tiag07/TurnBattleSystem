@@ -6526,6 +6526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b636487ce4a7bc6439076c8e6fcd8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentFighterTurn: {fileID: 0}
   heroSpots:
   - {fileID: 1716128320}
   - {fileID: 395489509}
@@ -6538,7 +6539,6 @@ MonoBehaviour:
   enemyFighters:
   - {fileID: 1188392742}
   fightersOrder: []
-  currentFighter: {fileID: 0}
 --- !u!4 &424119345
 Transform:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ namespace BattleSystem
         [SerializeField] TMP_Text txtFightersSequence;
         [SerializeField] TMP_Text txtCurrentFighter;
         [SerializeField] TMP_Text txtFighterActing;
+        [SerializeField] TMP_Text txtWaitingFighterDecision;
 
         [SerializeField] Button btnStartTurn, btnSkipTurn;
         [SerializeField] GameObject pnlChooseAction;
@@ -24,8 +25,9 @@ namespace BattleSystem
             txtFightersSequence.enabled = false;
             CloseAllInterfaces();
             btnStartTurn.gameObject.SetActive(true);
+
         }
-        public void OnFightersOrderSorted(List<Fighter> fighters)
+        public void RefreshFightersOrderListInterface(List<Fighter> fighters)
         {
             txtFightersSequence.text = string.Concat("<color=",titleColorHex,">Order:</color><br>");
             foreach(Fighter fighter in fighters)
@@ -53,39 +55,33 @@ namespace BattleSystem
             pnlChooseAction.SetActive(false);
             pnlChooseTarget.SetActive(false);
             txtFighterActing.gameObject.SetActive(false);
+            txtWaitingFighterDecision.gameObject.SetActive(false);
         }
 
-
-        public void RefreshBattleStateInterface(BattleManager.BattleState battleState)
+        public void ShowControllableTurnInterface()
         {
             CloseAllInterfaces();
-            switch (battleState)
-            {
-                case BattleManager.BattleState.TurnOfControlledFighterStarted:
-                    pnlChooseAction.SetActive(true);
-                    break;
-                case BattleManager.BattleState.TurnOfNonControlledFighterStarted:
-                    btnSkipTurn.gameObject.SetActive(true);
-                    break;
-                case BattleManager.BattleState.MainPhase:
-                    pnlChooseAction.SetActive(true);
-                    break;
-                case BattleManager.BattleState.TargetingAtkPhase:
-                    pnlChooseTarget.SetActive(true);
-                    break;
-                case BattleManager.BattleState.ActionPhase:
-                    txtFighterActing.gameObject.SetActive(true);
-                    break;
-                case BattleManager.BattleState.TargetingItemPhase:
-                    
-                    break;
-                case BattleManager.BattleState.WaitingAttackPhase:
-                    txtFighterActing.gameObject.SetActive(true);
-                    break;
-            }
+            pnlChooseAction.SetActive(true);
         }
-        public void ShowActionMessage(string attacker, BattleManager.ActionMode actionMode, string target, string item)
+        public void ShowAutomaticTurnInterface(Fighter currentFighter)
         {
+            CloseAllInterfaces();
+            txtWaitingFighterDecision.text = string.Concat("Waiting for ", currentFighter.nickName, " decision...");
+            txtWaitingFighterDecision.gameObject.SetActive(true);
+        }
+        public void ShowMainPhaseInterface()
+        {
+            CloseAllInterfaces();
+            pnlChooseAction.SetActive(true);
+        }
+        public void ShowTargetingFighterInterface()
+        {
+            CloseAllInterfaces();
+            pnlChooseTarget.SetActive(true);
+        }
+        public void ShowFighterActingMessage(Fighter attacker, Fighter target, BattleManager.ActionMode actionMode, string itemName)
+        {
+            CloseAllInterfaces();
             string actionMessage = "";
             switch (actionMode)
             {
@@ -93,11 +89,13 @@ namespace BattleSystem
                     actionMessage = " is attacking ";
                     break;
                 case BattleManager.ActionMode.item:
-                    actionMessage = string.Concat(" is using ", item, " in ");
+                    actionMessage = string.Concat(" is using ", itemName, " in ");
                     break;
             }
-            txtFighterActing.text = string.Concat(attacker, actionMessage, target);
+            txtFighterActing.text = string.Concat(attacker.nickName, actionMessage, target.nickName);
+            txtFighterActing.gameObject.SetActive(true);
         }
+
 
     }
 }

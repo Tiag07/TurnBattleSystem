@@ -21,27 +21,22 @@ namespace BattleSystem
         }
         void OnEnable()
         {
-            battleManager.onFightersOrderSorted += battleInterface.OnFightersOrderSorted;
+            battleManager.onFightersOrderSorted += battleInterface.RefreshFightersOrderListInterface;
 
-            //battleManager.onTurnOfControlledFighterStarted += battleInterface.EnableChooseAction;
-            //battleManager.onTurnOfNonControlledFighterStarted += battleInterface.EnableWaitTurn;
+            battleManager.onControllableTurnStarted += battleInterface.ShowControllableTurnInterface;
+            battleManager.onAutomaticTurnStarted += battleInterface.ShowAutomaticTurnInterface;
 
-            battleManager.onMainPhaseStarted += battleCamera.StartCameraBehavior;
-            battleManager.onActionPhase += battleInterface.ShowActionMessage;
-            //battleManager.onAttackButtonSelected += battleInterface.EnableChooseTargetInterface;
-            //battleManager.onAttackButtonSelected += targetSystem.EnableTarget;
-            battleManager.onTargetingStarted += targetSystem.EnableTargeting;
-            battleManager.onTargetingStarted += battleCamera.GeneralVision;
+            battleManager.onChoosingOrWaitingAction += battleCamera.StartCameraBehavior;
 
-            battleManager.onTargetingEnded += targetSystem.DisableTargeting;
-            //battleManager.onTargetingEnded += battleCamera.StartCameraBehavior;
-            // battleManager.onBackToMainInterfaceSelected += battleInterface.EnableChooseAction;
-            //battleManager.onBackToMainInterfaceSelected += battleCamera.StartCameraBehavior;
-            //battleManager.onAttackProcessStarted += battleInterface.EnableFighterIsAttackingOponentText;
+            battleManager.onAttackButtonSelected += battleInterface.ShowTargetingFighterInterface;
+
+            battleManager.onTargetingFightersStarted += targetSystem.EnableTargeting;
+            battleManager.onTargetingFightersStarted += battleCamera.GeneralVision;
+
+            battleManager.onTargetingFightersEnded += targetSystem.DisableTargeting;
+            battleManager.onActionProcessStarted += battleInterface.ShowFighterActingMessage;
 
             targetSystem.onTargetSelected += battleManager.ValidateTargetForAttack;
-
-            battleManager.onBattleStateChanged += battleInterface.RefreshBattleStateInterface;
         }
 
 

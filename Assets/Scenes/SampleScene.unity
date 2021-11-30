@@ -919,7 +919,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &104728831
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6570,6 +6570,7 @@ MonoBehaviour:
   txtFightersSequence: {fileID: 51424591}
   txtCurrentFighter: {fileID: 654536725}
   txtFighterActing: {fileID: 1811569031}
+  txtWaitingFighterDecision: {fileID: 104728832}
   btnStartTurn: {fileID: 799337192}
   btnSkipTurn: {fileID: 1747243599}
   pnlChooseAction: {fileID: 161100824}

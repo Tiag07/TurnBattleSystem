@@ -1,104 +1,274 @@
 fileFormatVersion: 2
 guid: a64cc903401e241dbb4ce8583b54708a
-timeCreated: 1493186128
-licenseType: Store
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: Chest
-    100004: IK
-    100006: Kiwi 1
-    100008: L_Ankle
-    100010: L_Head_01
-    100012: L_Head_02
-    100014: L_Head_Ctrl
-    100016: L_Hip
-    100018: L_Knee
-    100020: L_Knee_Ctrl
-    100022: L_Leg_Ctrl
-    100024: L_Leg_IK
-    100026: L_Toe
-    100028: R_Ankle
-    100030: R_Head_01
-    100032: R_Head_02
-    100034: R_Head_Ctrl
-    100036: R_Hip
-    100038: R_Knee
-    100040: R_Knee_Ctrl
-    100042: R_Leg_Ctrl
-    100044: R_Leg_IK
-    100046: R_Toe
-    100048: Root
-    100050: Root_Ctrl
-    100052: Tummy
-    100054: World_Ctrl
-    400000: //RootNode
-    400002: Chest
-    400004: IK
-    400006: Kiwi 1
-    400008: L_Ankle
-    400010: L_Head_01
-    400012: L_Head_02
-    400014: L_Head_Ctrl
-    400016: L_Hip
-    400018: L_Knee
-    400020: L_Knee_Ctrl
-    400022: L_Leg_Ctrl
-    400024: L_Leg_IK
-    400026: L_Toe
-    400028: R_Ankle
-    400030: R_Head_01
-    400032: R_Head_02
-    400034: R_Head_Ctrl
-    400036: R_Hip
-    400038: R_Knee
-    400040: R_Knee_Ctrl
-    400042: R_Leg_Ctrl
-    400044: R_Leg_IK
-    400046: R_Toe
-    400048: Root
-    400050: Root_Ctrl
-    400052: Tummy
-    400054: World_Ctrl
-    4300000: Kiwi
-    7400000: Attack
-    9500000: //RootNode
-    13700000: Kiwi 1
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: Chest
+  - first:
+      1: 100004
+    second: IK
+  - first:
+      1: 100006
+    second: Kiwi 1
+  - first:
+      1: 100008
+    second: L_Ankle
+  - first:
+      1: 100010
+    second: L_Head_01
+  - first:
+      1: 100012
+    second: L_Head_02
+  - first:
+      1: 100014
+    second: L_Head_Ctrl
+  - first:
+      1: 100016
+    second: L_Hip
+  - first:
+      1: 100018
+    second: L_Knee
+  - first:
+      1: 100020
+    second: L_Knee_Ctrl
+  - first:
+      1: 100022
+    second: L_Leg_Ctrl
+  - first:
+      1: 100024
+    second: L_Leg_IK
+  - first:
+      1: 100026
+    second: L_Toe
+  - first:
+      1: 100028
+    second: R_Ankle
+  - first:
+      1: 100030
+    second: R_Head_01
+  - first:
+      1: 100032
+    second: R_Head_02
+  - first:
+      1: 100034
+    second: R_Head_Ctrl
+  - first:
+      1: 100036
+    second: R_Hip
+  - first:
+      1: 100038
+    second: R_Knee
+  - first:
+      1: 100040
+    second: R_Knee_Ctrl
+  - first:
+      1: 100042
+    second: R_Leg_Ctrl
+  - first:
+      1: 100044
+    second: R_Leg_IK
+  - first:
+      1: 100046
+    second: R_Toe
+  - first:
+      1: 100048
+    second: Root
+  - first:
+      1: 100050
+    second: Root_Ctrl
+  - first:
+      1: 100052
+    second: Tummy
+  - first:
+      1: 100054
+    second: World_Ctrl
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: Chest
+  - first:
+      4: 400004
+    second: IK
+  - first:
+      4: 400006
+    second: Kiwi 1
+  - first:
+      4: 400008
+    second: L_Ankle
+  - first:
+      4: 400010
+    second: L_Head_01
+  - first:
+      4: 400012
+    second: L_Head_02
+  - first:
+      4: 400014
+    second: L_Head_Ctrl
+  - first:
+      4: 400016
+    second: L_Hip
+  - first:
+      4: 400018
+    second: L_Knee
+  - first:
+      4: 400020
+    second: L_Knee_Ctrl
+  - first:
+      4: 400022
+    second: L_Leg_Ctrl
+  - first:
+      4: 400024
+    second: L_Leg_IK
+  - first:
+      4: 400026
+    second: L_Toe
+  - first:
+      4: 400028
+    second: R_Ankle
+  - first:
+      4: 400030
+    second: R_Head_01
+  - first:
+      4: 400032
+    second: R_Head_02
+  - first:
+      4: 400034
+    second: R_Head_Ctrl
+  - first:
+      4: 400036
+    second: R_Hip
+  - first:
+      4: 400038
+    second: R_Knee
+  - first:
+      4: 400040
+    second: R_Knee_Ctrl
+  - first:
+      4: 400042
+    second: R_Leg_Ctrl
+  - first:
+      4: 400044
+    second: R_Leg_IK
+  - first:
+      4: 400046
+    second: R_Toe
+  - first:
+      4: 400048
+    second: Root
+  - first:
+      4: 400050
+    second: Root_Ctrl
+  - first:
+      4: 400052
+    second: Tummy
+  - first:
+      4: 400054
+    second: World_Ctrl
+  - first:
+      43: 4300000
+    second: Kiwi
+  - first:
+      74: 7400000
+    second: Kiwi_Attack
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Kiwi 1
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: phong1
+    second: {fileID: 2100000, guid: c5d2201309fe147aab95689b73d652d8, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Kiwi_Attack
+      takeName: Attack
+      internalID: 0
+      firstFrame: 1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -108,10 +278,14 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -121,14 +295,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

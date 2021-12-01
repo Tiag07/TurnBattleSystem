@@ -14,6 +14,12 @@ public class Fighter : MonoBehaviour
     [SerializeField] public int speed { get; private set; }
     public bool autoControl = false;
     public bool isDead = false;
+
+    private Animator animator;
+    public enum AnimationMotion
+    {
+        idle, walk, attack, damaged, death
+    }
     void Start()
     {
         //RefreshData();
@@ -26,7 +32,33 @@ public class Fighter : MonoBehaviour
         currentHp = maxHp;
         attack = fighterData.baseAttack;
         speed = fighterData.baseSpeed;
+
+        if (GetComponent<Animator>())
+            animator = GetComponent<Animator>();
     }
+
+    public void SetAnimation(AnimationMotion motion)
+    {
+        switch (motion)
+        {
+            case AnimationMotion.idle:
+                animator?.SetTrigger("idle");
+                break;
+            case AnimationMotion.walk:
+                animator?.SetTrigger("walk");
+                break;
+            case AnimationMotion.attack:
+                animator?.SetTrigger("attack");
+                break;
+            case AnimationMotion.damaged:
+                animator?.SetTrigger("damaged");
+                break;
+            case AnimationMotion.death:
+                animator?.SetTrigger("death");
+                break;
+        }
+    }
+
     public void TakeDamage(int damageAmount = 0)
     {
         currentHp -= damageAmount; 

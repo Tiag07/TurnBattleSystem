@@ -119,6 +119,7 @@ namespace BattleSystem
                 observers[i].transform.LookAt(enemyDirection);
             }
         }
+
         public void InitialFightersOrderSort(List<Fighter> heroes, List<Fighter> enemies)
         {
             List<Fighter> allFightersList = GetListWithAllFighters(heroes, enemies);
@@ -198,25 +199,70 @@ namespace BattleSystem
                 StartCoroutine(StartAttackProcess(fighterTargeted));
             }
         }
+
         IEnumerator StartAttackProcess(Fighter fighterTargeted)
         {
             onTargetingFightersFinished?.Invoke();
             onActionProcessStarted?.Invoke();
             onFighterActionHappening?.Invoke(currentFighterTurn, fighterTargeted, ActionMode.attack);
             yield return new WaitForSeconds(1f);
-
             Vector3 originalAttackerPosition = currentFighterTurn.transform.position;
-            Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward * 2;
-            currentFighterTurn.transform.position = spotForAttackOponent;
-   
+            //Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward * 2;
+
+            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.walk);
+            #region MovingToOponent
+            while (Vector3.Distance(currentFighterTurn.transform.position, fighterTargeted.transform.position) > 1f)
+            {
+                currentFighterTurn.transform.position =
+                    Vector3.MoveTowards(currentFighterTurn.transform.position, fighterTargeted.transform.position, movingSpeed * movingSpeed * Time.deltaTime);
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+            #endregion
+            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.attack);
             fighterTargeted.TakeDamage(currentFighterTurn.attack);
+            fighterTargeted.SetAnimation(Fighter.AnimationMotion.damaged);
+
             onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
             yield return new WaitForSeconds(1f);
-            currentFighterTurn.transform.position = originalAttackerPosition;
+            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.walk);
+            #region ReturningToOriginalSpot
+            while (Vector3.Distance(currentFighterTurn.transform.position, originalAttackerPosition) > 0)
+            {
+                currentFighterTurn.transform.position =
+                    Vector3.MoveTowards(currentFighterTurn.transform.position, originalAttackerPosition, movingSpeed * movingSpeed * Time.deltaTime);
+                yield return new WaitForSeconds(Time.deltaTime);               
+            }
+            #endregion
+            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.idle);
             yield return new WaitForSeconds(1f);
+
             SkipToNextTurn();
         }
+        #region ACTION_ANIMATIONS
 
+        private bool moveFighter = false;
+        private Transform fighterForMoving;
+        private Vector3 originalSpot;
+        private Vector3 targetSpot;
+        private float movingSpeed = 2.5f;
+        void MoveFighterToTarget(Transform body, Vector3 originalPosition, Vector3 destinyPosition)
+        {
+            fighterForMoving = body;
+            originalSpot = originalPosition;
+            targetSpot = destinyPosition;
+            moveFighter = true;
+        }
+        private void Update()
+        {
+            if (!moveFighter) return;
+
+            if(fighterForMoving.position != targetSpot)
+            {
+                fighterForMoving.position = Vector3.MoveTowards(fighterForMoving.position, targetSpot, movingSpeed * Time.deltaTime);
+            }
+            else moveFighter = false;
+        }
+        #endregion
 
         enum TargetTeam { ally, oponent }
         List<Fighter> GetTargetTeam(TargetTeam targetTeam)

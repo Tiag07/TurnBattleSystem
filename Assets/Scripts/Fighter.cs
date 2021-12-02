@@ -12,10 +12,10 @@ public class Fighter : MonoBehaviour
     [SerializeField] public int currentHp { get; private set; }
     [SerializeField] public int attack { get; private set; }
     [SerializeField] public int speed { get; private set; }
-    public bool autoControl = false;
-    public bool isDead = false;
+    public bool autoControl { get; private set; } = false;
+    public bool isDead { get; private set; } = false;
 
-    private Animator animator;
+private Animator animator;
     public enum AnimationMotion
     {
         idle, walk, attack, damaged, death
@@ -35,6 +35,10 @@ public class Fighter : MonoBehaviour
 
         if (GetComponent<Animator>())
             animator = GetComponent<Animator>();
+    }
+    public void SwitchAutoControl()
+    {
+        autoControl = !autoControl;
     }
 
     public void SetAnimation(AnimationMotion motion)
@@ -59,8 +63,22 @@ public class Fighter : MonoBehaviour
         }
     }
 
+
+
     public void TakeDamage(int damageAmount = 0)
     {
-        currentHp -= damageAmount; 
+        currentHp -= damageAmount;
+        print("hp decreased");
+        SetAnimation(AnimationMotion.damaged);
+        if (currentHp <= 0)
+        {
+            print(currentHp);
+            currentHp = 0;
+            SetAnimation(AnimationMotion.death);
+            isDead = true;
+            return;
+        }
+        else SetAnimation(AnimationMotion.idle);
     }
+
 }

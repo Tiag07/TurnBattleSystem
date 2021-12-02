@@ -12,10 +12,15 @@ namespace BattleSystem
         [SerializeField] TMP_Text txtCurrentFighter;
         [SerializeField] TMP_Text txtFighterActing;
         [SerializeField] TMP_Text txtWaitingFighterDecision;
+        [SerializeField] TMP_Text txtAutoControl;
+        [SerializeField] TMP_Text txtVictory;
+        [SerializeField] TMP_Text txtDefeat;
+        
 
-        [SerializeField] Button btnStartTurn, btnSkipTurn;
+        [SerializeField] Button btnStartTurn, btnAutoControl;
         [SerializeField] GameObject pnlChooseAction;
         [SerializeField] GameObject pnlChooseTarget;
+        [SerializeField] Image imgFadeInOut;
         [SerializeField] Color titleColor;
         string titleColorHex;
 
@@ -50,8 +55,10 @@ namespace BattleSystem
         }
         public void CloseAllInterfaces()
         {
+            imgFadeInOut.gameObject.SetActive(false);
+            txtDefeat.gameObject.SetActive(false);
+            txtVictory.gameObject.SetActive(false);
             btnStartTurn.gameObject.SetActive(false);
-            btnSkipTurn.gameObject.SetActive(false);
             pnlChooseAction.SetActive(false);
             pnlChooseTarget.SetActive(false);
             txtFighterActing.gameObject.SetActive(false);
@@ -74,6 +81,11 @@ namespace BattleSystem
             CloseAllInterfaces();
             pnlChooseAction.SetActive(true);
         }
+        public void EnableAutoControlButton()
+        {
+            btnAutoControl.gameObject.SetActive(true);
+        }
+        public void DisableAutoControlButton() => btnAutoControl.gameObject.SetActive(false);
         public void ShowTargetingFighterInterface()
         {
             CloseAllInterfaces();
@@ -86,7 +98,7 @@ namespace BattleSystem
             switch (actionMode)
             {
                 case BattleManager.ActionMode.attack:
-                    actionMessage = " is attacking ";
+                    actionMessage = " attacks ";
                     break;
                 case BattleManager.ActionMode.item:
                     actionMessage = string.Concat(" is using ", itemName, " in ");
@@ -96,6 +108,27 @@ namespace BattleSystem
             txtFighterActing.gameObject.SetActive(true);
         }
 
+        public void ShowBattleResults(BattleManager.BattleResult battleResults)
+        {
+            CloseAllInterfaces();
+            FadeIn(imgFadeInOut, 0.7f, 1f);
+            switch (battleResults)
+            {
+                case BattleManager.BattleResult.victory:
+                    FadeIn(txtVictory, 0.7f, 1f);
+                    break;
+                case BattleManager.BattleResult.defeat:
+                    FadeIn(txtDefeat, 1f, 1f);
+                    break;
+            }
+        }
+
+        void FadeIn(Graphic graphic, float finalAlpha, float fadeTime, bool ignoreTimeScale = false)
+        {
+            graphic.canvasRenderer.SetAlpha(0f);
+            graphic.gameObject.SetActive(true);
+            graphic.CrossFadeAlpha(finalAlpha, fadeTime, false);
+        }
 
     }
 }

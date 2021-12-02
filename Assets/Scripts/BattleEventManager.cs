@@ -23,6 +23,7 @@ namespace BattleSystem
         {
             battleManager.onFightersOrderOrStatusChanged += battleInterface.RefreshFightersOrderListInterface;
 
+            
             battleManager.onControllableTurnStarted += battleInterface.ShowControllableTurnInterface;
             battleManager.onAutomaticTurnStarted += battleInterface.ShowAutomaticTurnInterface;
 
@@ -40,6 +41,7 @@ namespace BattleSystem
             battleManager.onFighterActionHappening += battleInterface.ShowFighterActingMessage;
 
             targetSystem.onTargetSelected += battleManager.ValidateTargetForAttack;
+            battleManager.onBattleEnds += battleInterface.ShowBattleResults;
         }
 
 

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 namespace BattleSystem
 {
     public class BattleManager : MonoBehaviour
     {
-        [SerializeField] Fighter currentFighterTurn;
+        [SerializeField] Fighter currentTurnFighter;
         [SerializeField] Transform[] heroSpots, enemySpots;
         [SerializeField] List<Fighter> heroFighters;
         [SerializeField] List<Fighter> enemyFighters;
@@ -40,7 +41,9 @@ namespace BattleSystem
         public event Action<List<Fighter>> onFightersOrderOrStatusChanged;
         public event Action onChoosingOrWaitingAction;
         public event Action onControllableTurnStarted;
+        //public event Action onAutoControlButtonSelected;
         public event Action<Fighter> onAutomaticTurnStarted;
+        public event Action onEnemyTurnStarted;
         public event Action onAttackButtonSelected;
         public event Action onItemButtonSelected;
         public event Action onTargetingFightersStarted;
@@ -49,6 +52,8 @@ namespace BattleSystem
         public enum ActionMode { attack, item }
         public delegate void ActionProcess(Fighter attacker = null, Fighter target = null, ActionMode actionMode = ActionMode.attack, string itemName = "Item");
         public event ActionProcess onFighterActionHappening;
+        public enum BattleResult { victory, defeat, draw }
+        public event Action<BattleResult> onBattleEnds;
 
         public void StartBattle()
         {
@@ -99,26 +104,31 @@ namespace BattleSystem
         {
             for (int i = 0; i < observers.Count; i++)
             {
-                Vector3 targetEnemy = Vector3.zero;
+                Fighter targetOponent = null;
 
-                if (targets.Count - 1 >= i && targets[i].gameObject.activeSelf)
-                    targetEnemy = targets[i].transform.position;
+                if (targets.Count - 1 >= i && targets[i].isDead == false)
+                    targetOponent = targets[i];            
                 else
                 {
                     foreach (Fighter target in targets)
                     {
-                        if (target.gameObject.activeSelf)
+                        if (target.isDead == false)
                         {
-                            targetEnemy = target.transform.position;
+                            targetOponent = target;
                             break;
                         }
                     }
                 }
-
-                Vector3 enemyDirection = new Vector3(targetEnemy.x, observers[i].transform.position.y, targetEnemy.z);
-                observers[i].transform.LookAt(enemyDirection);
+                FighterLookAt(observers[i], targetOponent);
             }
         }
+        void FighterLookAt(Fighter observer, Fighter target)
+        {
+            Vector3 targetDirection =
+                new Vector3(target.transform.position.x, observer.transform.position.y, target.transform.position.z);
+            observer.transform.LookAt(targetDirection);
+        }
+        
 
         public void InitialFightersOrderSort(List<Fighter> heroes, List<Fighter> enemies)
         {
@@ -141,15 +151,21 @@ namespace BattleSystem
             onFightersOrderOrStatusChanged?.Invoke(newFightersOrder);
 
         }
-        void RefreshCurrentFighter(List<Fighter> fighters) => currentFighterTurn = fighters[0];
+        void RefreshCurrentFighter(List<Fighter> fighters) => currentTurnFighter = fighters[0];
 
         void StartTurn()
         {
+            if (currentTurnFighter.isDead)
+            {
+                SkipToNextTurn();
+                return;
+            }
+                
             onChoosingOrWaitingAction?.Invoke();
-            if (heroFighters.Contains(currentFighterTurn))
+            if (heroFighters.Contains(currentTurnFighter))
             {
                 print("Hero's turn");
-                if (currentFighterTurn.autoControl == false)
+                if (currentTurnFighter.autoControl == false)
                     onControllableTurnStarted?.Invoke();
                 else
                 {
@@ -157,23 +173,84 @@ namespace BattleSystem
                 }
                 return;
             }
-            else if (enemyFighters.Contains(currentFighterTurn))
+            else if (enemyFighters.Contains(currentTurnFighter))
             {
                 print("Enemy's turn");
+                onEnemyTurnStarted?.Invoke();
                 StartCoroutine(StartAutomaticTurnProcess());
             }
         }
+        //public void Button_AutomaticControl()
+        //{
+        //    if(actingCoroutine != null) StopCoroutine(actingCoroutine);
+
+        //    currentTurnFighter.SwitchAutoControl();
+        //    onAutoControlButtonSelected?.Invoke();
+        //    StartTurn();
+        //}
+        #region AUTOMATIC TURN
         IEnumerator StartAutomaticTurnProcess()
         {
-            onAutomaticTurnStarted?.Invoke(currentFighterTurn);
+            onAutomaticTurnStarted?.Invoke(currentTurnFighter);
             yield return new WaitForSeconds(2f);
 
             List<Fighter> targetedTeam = GetTargetTeam(TargetTeam.oponent);
             Fighter lowerHpTarget = GetLowerHealthFighterFromTeam(targetedTeam);
-           StartCoroutine(StartAttackProcess(lowerHpTarget));
-            print("auto turn end");
+            StartCoroutine(StartAttackProcess(lowerHpTarget));
         }
+        enum TargetTeam { ally, oponent }
+        List<Fighter> GetTargetTeam(TargetTeam targetTeam)
+        {
+            List<Fighter> listForSearch = new List<Fighter>();
 
+            if (heroFighters.Contains(currentTurnFighter))
+            {
+                switch (targetTeam)
+                {
+                    case TargetTeam.ally:
+                        listForSearch = new List<Fighter>(heroFighters);
+                        break;
+                    case TargetTeam.oponent:
+                        listForSearch = new List<Fighter>(enemyFighters);
+                        break;
+                }
+            }
+            else if (enemyFighters.Contains(currentTurnFighter))
+            {
+                switch (targetTeam)
+                {
+                    case TargetTeam.ally:
+                        listForSearch = new List<Fighter>(enemyFighters);
+                        break;
+                    case TargetTeam.oponent:
+                        listForSearch = new List<Fighter>(heroFighters);
+                        break;
+                }
+            }
+            return listForSearch;
+        }
+        Fighter GetLowerHealthFighterFromTeam(List<Fighter> team)
+        {
+            Fighter lowerHpLiveFighter = null;
+
+            foreach (Fighter fighter in team)
+            {
+                if (fighter.isDead == false) 
+                {
+                    lowerHpLiveFighter = fighter;
+                    break;
+                }
+                
+            }
+                
+            foreach (Fighter fighter in team)
+            {
+                if (fighter.currentHp < lowerHpLiveFighter.currentHp && fighter.isDead == false)
+                    lowerHpLiveFighter = fighter;
+            }
+            return lowerHpLiveFighter;
+        }
+        #endregion
         public void Button_BackToChooseAction()
         {
             onControllableTurnStarted?.Invoke();
@@ -182,21 +259,29 @@ namespace BattleSystem
         }
         public void Button_Attack()
         {
-            print(currentFighterTurn + " will attack");
+            print(currentTurnFighter + " will attack");
             onAttackButtonSelected?.Invoke();
             onTargetingFightersStarted?.Invoke();
 
         }
         public void ValidateTargetForAttack(Fighter fighterTargeted)
         {
+            if (fighterTargeted.isDead)
+            {
+                print("Invalid Target. This fighter is Dead.");
+                return;
+            }
+                
             if (heroFighters.Contains(fighterTargeted))
             {
                 print("Invalid Target");
+                return;
             }
             if (enemyFighters.Contains(fighterTargeted))
             {
                 print("Valid Target");
                 StartCoroutine(StartAttackProcess(fighterTargeted));
+                return;
             }
         }
 
@@ -204,39 +289,40 @@ namespace BattleSystem
         {
             onTargetingFightersFinished?.Invoke();
             onActionProcessStarted?.Invoke();
-            onFighterActionHappening?.Invoke(currentFighterTurn, fighterTargeted, ActionMode.attack);
+            onFighterActionHappening?.Invoke(currentTurnFighter, fighterTargeted, ActionMode.attack);
             yield return new WaitForSeconds(1f);
-            Vector3 originalAttackerPosition = currentFighterTurn.transform.position;
-            //Vector3 spotForAttackOponent = fighterTargeted.transform.position + fighterTargeted.transform.forward * 2;
+            Vector3 originalAttackerPosition = currentTurnFighter.transform.position;
 
-            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.walk);
+            FighterLookAt(currentTurnFighter, fighterTargeted);
+            currentTurnFighter.SetAnimation(Fighter.AnimationMotion.walk);
             #region MovingToOponent
-            while (Vector3.Distance(currentFighterTurn.transform.position, fighterTargeted.transform.position) > 1f)
+            while (Vector3.Distance(currentTurnFighter.transform.position, fighterTargeted.transform.position) > 1f)
             {
-                currentFighterTurn.transform.position =
-                    Vector3.MoveTowards(currentFighterTurn.transform.position, fighterTargeted.transform.position, movingSpeed * movingSpeed * Time.deltaTime);
+                currentTurnFighter.transform.position =
+                    Vector3.MoveTowards(currentTurnFighter.transform.position, fighterTargeted.transform.position, movingSpeed * movingSpeed * Time.deltaTime);
                 yield return new WaitForSeconds(Time.deltaTime);
             }
             #endregion
-            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.attack);
-            fighterTargeted.TakeDamage(currentFighterTurn.attack);
-            fighterTargeted.SetAnimation(Fighter.AnimationMotion.damaged);
+            currentTurnFighter.SetAnimation(Fighter.AnimationMotion.attack);
+            fighterTargeted.TakeDamage(currentTurnFighter.attack);
+            //fighterTargeted.SetAnimation(Fighter.AnimationMotion.damaged);
 
             onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
+            print("order Sorted");
             yield return new WaitForSeconds(1f);
-            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.walk);
+            currentTurnFighter.SetAnimation(Fighter.AnimationMotion.walk);
             #region ReturningToOriginalSpot
-            while (Vector3.Distance(currentFighterTurn.transform.position, originalAttackerPosition) > 0)
+            while (Vector3.Distance(currentTurnFighter.transform.position, originalAttackerPosition) > 0)
             {
-                currentFighterTurn.transform.position =
-                    Vector3.MoveTowards(currentFighterTurn.transform.position, originalAttackerPosition, movingSpeed * movingSpeed * Time.deltaTime);
+                currentTurnFighter.transform.position =
+                    Vector3.MoveTowards(currentTurnFighter.transform.position, originalAttackerPosition, movingSpeed * movingSpeed * Time.deltaTime);
                 yield return new WaitForSeconds(Time.deltaTime);               
             }
             #endregion
-            currentFighterTurn.SetAnimation(Fighter.AnimationMotion.idle);
+            currentTurnFighter.SetAnimation(Fighter.AnimationMotion.idle);
             yield return new WaitForSeconds(1f);
 
-            SkipToNextTurn();
+            CheckTeamsStatus();
         }
         #region ACTION_ANIMATIONS
 
@@ -264,58 +350,12 @@ namespace BattleSystem
         }
         #endregion
 
-        enum TargetTeam { ally, oponent }
-        List<Fighter> GetTargetTeam(TargetTeam targetTeam)
-        {
-            List<Fighter> listForSearch = new List<Fighter>();
+       
 
-            if (heroFighters.Contains(currentFighterTurn))
-            {
-                switch (targetTeam)
-                {
-                    case TargetTeam.ally:
-                        listForSearch = new List<Fighter>(heroFighters);
-                        break;
-                    case TargetTeam.oponent:
-                        listForSearch = new List<Fighter>(enemyFighters);
-                        break;
-                }
-            }
-            else if (enemyFighters.Contains(currentFighterTurn))
-            {
-                switch (targetTeam)
-                {
-                    case TargetTeam.ally:
-                        listForSearch = new List<Fighter>(enemyFighters);
-                        break;
-                    case TargetTeam.oponent:
-                        listForSearch = new List<Fighter>(heroFighters);
-                        break;
-                }
-            }
-            return listForSearch;
-        }
-        Fighter GetLowerHealthFighterFromTeam(List<Fighter> team)
+        void CheckTeamsStatus()
         {
-            Fighter lowerHpFighter = team[0];
-            foreach(Fighter fighter in team)
-            {
-                if (fighter.currentHp < lowerHpFighter.currentHp)
-                    lowerHpFighter = fighter;
-            }
-            return lowerHpFighter;
-        }
-
-        public void SkipToNextTurn()
-        {
-            onTargetingFightersFinished?.Invoke();
             int deadHeroes = 0;
             int deadenemies = 0;
-            Fighter fighterWhoEndedHisTurn = fightersOrder[0];
-            fightersOrder.Remove(fighterWhoEndedHisTurn);
-            fightersOrder.Add(fighterWhoEndedHisTurn);
-            onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
-            StartTurn();
 
             foreach (Fighter hero in heroFighters)
                 if (hero.isDead) deadHeroes += 1;
@@ -323,13 +363,40 @@ namespace BattleSystem
             foreach (Fighter enemy in enemyFighters)
                 if (enemy.isDead) deadenemies += 1;
 
-            if (deadHeroes == heroFighters.Count) LoseBattle();
-            if (deadenemies == heroFighters.Count) winBattle();
+            
 
+            if (deadenemies == enemyFighters.Count)
+            {
+                onBattleEnds?.Invoke(BattleResult.victory);
+                return;
+            }
+            if (deadHeroes == heroFighters.Count)
+            {
+                onBattleEnds?.Invoke(BattleResult.defeat);
+                return;
+            }
+            if (deadenemies > 0) SetFightersLookRotation(heroFighters, enemyFighters);
+            if (deadenemies > 0) SetFightersLookRotation(enemyFighters, heroFighters);
+
+            SkipToNextTurn();
+        }
+        public void SkipToNextTurn()
+        {
+            //onTargetingFightersFinished?.Invoke();
+            
+            Fighter fighterWhoEndedHisTurn = fightersOrder[0];
+            fightersOrder.Remove(fighterWhoEndedHisTurn);
+            fightersOrder.Add(fighterWhoEndedHisTurn);
+            onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
+            StartTurn();
+      
         }
 
-        void LoseBattle() { }
-        void winBattle() { }
-
+        public void ReloadGame()
+        {
+            Scene thisScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(thisScene.name);
+        }
+        
     }
 }

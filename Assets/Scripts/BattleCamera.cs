@@ -23,6 +23,7 @@ namespace BattleSystem
         Coroutine cameraBehaviorLoop;
         public void StartCameraBehavior()
         {
+           if(cameraBehaviorLoop!= null) StopCoroutine(cameraBehaviorLoop);
                 cameraBehaviorLoop = StartCoroutine(CameraBehaviorLoops());
         }
 
@@ -58,7 +59,7 @@ namespace BattleSystem
         {
             transform.position = generalVisionPoint.position;
             transform.rotation = generalVisionPoint.rotation;
-            StopAllCoroutines();
+            if (cameraBehaviorLoop != null) StopCoroutine(cameraBehaviorLoop);
             movimentType = MovimentType.idle;
         }
         void PreparingRotateAroundCamera()

@@ -6,13 +6,13 @@ namespace BattleSystem
 {
     public class BattleCamera : MonoBehaviour
     {
-        [SerializeField] Transform arenaPoint;
+        Vector3 arenaCenterPoint = Vector3.zero;
         [SerializeField] float rotatingAroundSpeed = 10f;
         [SerializeField] float approachingSpeed = 10f;
         [SerializeField] Transform generalVisionPoint;
         [SerializeField] Transform[] middleCameraPoints;
         [SerializeField] BattleManager battleSystem;
-        
+
         public enum MovimentType
         {
             idle, rotateAround, focus, approaching,
@@ -21,10 +21,28 @@ namespace BattleSystem
         Transform fighterToFocus;
 
         Coroutine cameraBehaviorLoop;
+
+        public void RefreshArenaCenterPoint(List<Fighter> allFighterPositions)
+        {
+            
+            for (int i = 0; i < allFighterPositions.Count; i++)
+            {
+                arenaCenterPoint += allFighterPositions[i].transform.position;
+            }
+            arenaCenterPoint /= allFighterPositions.Count;
+
+            transform.position = arenaCenterPoint;
+        }
         public void StartCameraBehavior()
         {
-           if(cameraBehaviorLoop!= null) StopCoroutine(cameraBehaviorLoop);
+            if (movimentType == MovimentType.idle)
+            {
+                if (cameraBehaviorLoop != null)
+                    StopCoroutine(cameraBehaviorLoop);
+                
                 cameraBehaviorLoop = StartCoroutine(CameraBehaviorLoops());
+            }
+
         }
 
         IEnumerator CameraBehaviorLoops()
@@ -42,7 +60,7 @@ namespace BattleSystem
             switch (movimentType)
             {
                 case MovimentType.rotateAround:
-                    transform.RotateAround(arenaPoint.position, Vector3.up, rotatingAroundSpeed * Time.deltaTime);
+                    transform.RotateAround(arenaCenterPoint, Vector3.up, rotatingAroundSpeed * Time.deltaTime);
                     break;
 
                 case MovimentType.approaching:
@@ -66,7 +84,7 @@ namespace BattleSystem
         {
             int randomCameraPoint = Random.Range(0, middleCameraPoints.Length);
             transform.position = middleCameraPoints[randomCameraPoint].position;
-            transform.LookAt(arenaPoint);
+            transform.LookAt(arenaCenterPoint);
             movimentType = MovimentType.rotateAround;
 
         }

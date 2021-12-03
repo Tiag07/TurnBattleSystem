@@ -30,6 +30,7 @@ namespace BattleSystem
             txtFightersSequence.enabled = false;
             CloseAllInterfaces();
             btnStartTurn.gameObject.SetActive(true);
+            btnAutoControl.gameObject.SetActive(false);
 
         }
         public void RefreshFightersOrderListInterface(List<Fighter> fighters)
@@ -84,6 +85,11 @@ namespace BattleSystem
         public void EnableAutoControlButton()
         {
             btnAutoControl.gameObject.SetActive(true);
+        }
+        public void RefreshAutoControlButtonStatus(bool autoControlIsOn)
+        {
+            string currentControlStatus = autoControlIsOn ? "<color=green>On" : "<color=red>Off";
+            txtAutoControl.text = string.Concat("Auto ", currentControlStatus);
         }
         public void DisableAutoControlButton() => btnAutoControl.gameObject.SetActive(false);
         public void ShowTargetingFighterInterface()

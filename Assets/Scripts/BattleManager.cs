@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
-using UnityEngine.SceneManagement;
 
 namespace BattleSystem
 {
@@ -38,10 +37,12 @@ namespace BattleSystem
             }
         }
 
+        public event Action<List<Fighter>> onFightersPositionsSetUp;
         public event Action<List<Fighter>> onFightersOrderOrStatusChanged;
-        public event Action onChoosingOrWaitingAction;
+        public event Action onMainPhaseStarted_ChoosingOrWaitingAction;
         public event Action onControllableTurnStarted;
-        //public event Action onAutoControlButtonSelected;
+        public event Action<bool> onAutoControlButtonDisplayedOrRefreshed;
+        public event Action onAutoControlButtonSelected;
         public event Action<Fighter> onAutomaticTurnStarted;
         public event Action onEnemyTurnStarted;
         public event Action onAttackButtonSelected;
@@ -54,6 +55,8 @@ namespace BattleSystem
         public event ActionProcess onFighterActionHappening;
         public enum BattleResult { victory, defeat, draw }
         public event Action<BattleResult> onBattleEnds;
+
+        Coroutine actingCoroutine;
 
         public void StartBattle()
         {
@@ -99,6 +102,8 @@ namespace BattleSystem
             {
                 enemies[i].transform.position = enemySpots[i].position;
             }
+            onFightersPositionsSetUp?.Invoke(GetListWithAllFighters(heroes, enemies));
+
         }
         public void SetFightersLookRotation(List<Fighter> observers, List<Fighter> targets)
         {
@@ -161,7 +166,8 @@ namespace BattleSystem
                 return;
             }
                 
-            onChoosingOrWaitingAction?.Invoke();
+            onMainPhaseStarted_ChoosingOrWaitingAction?.Invoke();
+            onAutoControlButtonDisplayedOrRefreshed?.Invoke(currentTurnFighter.autoControl);
             if (heroFighters.Contains(currentTurnFighter))
             {
                 print("Hero's turn");
@@ -169,7 +175,7 @@ namespace BattleSystem
                     onControllableTurnStarted?.Invoke();
                 else
                 {
-                   StartCoroutine(StartAutomaticTurnProcess());
+                    actingCoroutine = StartCoroutine(StartAutomaticTurnProcess());
                 }
                 return;
             }
@@ -177,17 +183,16 @@ namespace BattleSystem
             {
                 print("Enemy's turn");
                 onEnemyTurnStarted?.Invoke();
-                StartCoroutine(StartAutomaticTurnProcess());
+                actingCoroutine = StartCoroutine(StartAutomaticTurnProcess());
             }
         }
-        //public void Button_AutomaticControl()
-        //{
-        //    if(actingCoroutine != null) StopCoroutine(actingCoroutine);
-
-        //    currentTurnFighter.SwitchAutoControl();
-        //    onAutoControlButtonSelected?.Invoke();
-        //    StartTurn();
-        //}
+        public void Button_AutomaticControl()
+        {
+            if (actingCoroutine != null) StopCoroutine(actingCoroutine);
+            currentTurnFighter.SwitchAutoControl();
+            onAutoControlButtonDisplayedOrRefreshed?.Invoke(currentTurnFighter.autoControl);
+            StartTurn();
+        }
         #region AUTOMATIC TURN
         IEnumerator StartAutomaticTurnProcess()
         {
@@ -255,7 +260,7 @@ namespace BattleSystem
         {
             onControllableTurnStarted?.Invoke();
             onTargetingFightersFinished?.Invoke();
-            onChoosingOrWaitingAction?.Invoke();
+            onMainPhaseStarted_ChoosingOrWaitingAction?.Invoke();
         }
         public void Button_Attack()
         {
@@ -296,28 +301,32 @@ namespace BattleSystem
             FighterLookAt(currentTurnFighter, fighterTargeted);
             currentTurnFighter.SetAnimation(Fighter.AnimationMotion.walk);
             #region MovingToOponent
-            while (Vector3.Distance(currentTurnFighter.transform.position, fighterTargeted.transform.position) > 1f)
-            {
-                currentTurnFighter.transform.position =
-                    Vector3.MoveTowards(currentTurnFighter.transform.position, fighterTargeted.transform.position, movingSpeed * movingSpeed * Time.deltaTime);
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
+            //while (Vector3.Distance(currentTurnFighter.transform.position, fighterTargeted.transform.position) > 1f)
+            //{
+            //    currentTurnFighter.transform.position =
+            //        Vector3.MoveTowards(currentTurnFighter.transform.position, fighterTargeted.transform.position, movingSpeed * movingSpeed * Time.deltaTime);
+            //    yield return new WaitForSeconds(Time.deltaTime);
+            //}
             #endregion
+            MoveFighterToTarget(currentTurnFighter.transform, fighterTargeted.transform.position, 1f);
+
+            while (fighterIsMoving)
+                yield return new WaitForSeconds(Time.deltaTime);
+
             currentTurnFighter.SetAnimation(Fighter.AnimationMotion.attack);
             fighterTargeted.TakeDamage(currentTurnFighter.attack);
-            //fighterTargeted.SetAnimation(Fighter.AnimationMotion.damaged);
+
 
             onFightersOrderOrStatusChanged?.Invoke(fightersOrder);
             print("order Sorted");
             yield return new WaitForSeconds(1f);
             currentTurnFighter.SetAnimation(Fighter.AnimationMotion.walk);
             #region ReturningToOriginalSpot
-            while (Vector3.Distance(currentTurnFighter.transform.position, originalAttackerPosition) > 0)
-            {
-                currentTurnFighter.transform.position =
-                    Vector3.MoveTowards(currentTurnFighter.transform.position, originalAttackerPosition, movingSpeed * movingSpeed * Time.deltaTime);
-                yield return new WaitForSeconds(Time.deltaTime);               
-            }
+            MoveFighterToTarget(currentTurnFighter.transform, originalSpot);
+            
+            while (fighterIsMoving) 
+                yield return new WaitForSeconds(Time.deltaTime);
+            
             #endregion
             currentTurnFighter.SetAnimation(Fighter.AnimationMotion.idle);
             yield return new WaitForSeconds(1f);
@@ -325,28 +334,29 @@ namespace BattleSystem
             CheckTeamsStatus();
         }
         #region ACTION_ANIMATIONS
-
-        private bool moveFighter = false;
+        private bool fighterIsMoving = false;
         private Transform fighterForMoving;
         private Vector3 originalSpot;
-        private Vector3 targetSpot;
-        private float movingSpeed = 2.5f;
-        void MoveFighterToTarget(Transform body, Vector3 originalPosition, Vector3 destinyPosition)
+        private Vector3 destiny;
+        private float distanceFromDestiny = 1f;
+        private readonly float movingSpeed = 2.5f;
+        void MoveFighterToTarget(Transform fighterForMoving, Vector3 destinyPosition, float distanceFromTarget = 0f)
         {
-            fighterForMoving = body;
-            originalSpot = originalPosition;
-            targetSpot = destinyPosition;
-            moveFighter = true;
+            originalSpot = fighterForMoving.transform.position;
+            this.fighterForMoving = fighterForMoving.transform;
+            destiny = destinyPosition;
+            distanceFromDestiny = distanceFromTarget;
+            fighterIsMoving = true;
         }
         private void Update()
         {
-            if (!moveFighter) return;
+            if (!fighterIsMoving) return;
 
-            if(fighterForMoving.position != targetSpot)
+            if ((Vector3.Distance(fighterForMoving.position, destiny) > distanceFromDestiny))
             {
-                fighterForMoving.position = Vector3.MoveTowards(fighterForMoving.position, targetSpot, movingSpeed * Time.deltaTime);
+                fighterForMoving.position = Vector3.MoveTowards(fighterForMoving.position, destiny, movingSpeed * Time.deltaTime);
             }
-            else moveFighter = false;
+            else fighterIsMoving = false;
         }
         #endregion
 
@@ -382,8 +392,6 @@ namespace BattleSystem
         }
         public void SkipToNextTurn()
         {
-            //onTargetingFightersFinished?.Invoke();
-            
             Fighter fighterWhoEndedHisTurn = fightersOrder[0];
             fightersOrder.Remove(fighterWhoEndedHisTurn);
             fightersOrder.Add(fighterWhoEndedHisTurn);
@@ -392,11 +400,6 @@ namespace BattleSystem
       
         }
 
-        public void ReloadGame()
-        {
-            Scene thisScene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(thisScene.name);
-        }
         
     }
 }

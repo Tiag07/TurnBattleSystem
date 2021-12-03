@@ -30,6 +30,7 @@ namespace BattleSystem
             txtFightersSequence.enabled = false;
             CloseAllInterfaces();
             btnStartTurn.gameObject.SetActive(true);
+            btnAutoControl.gameObject.SetActive(false);
 
         }
         public void RefreshFightersOrderListInterface(List<Fighter> fighters)

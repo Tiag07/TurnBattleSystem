@@ -85,6 +85,11 @@ namespace BattleSystem
         {
             btnAutoControl.gameObject.SetActive(true);
         }
+        public void RefreshAutoControlButtonStatus(bool autoControlIsOn)
+        {
+            string currentControlStatus = autoControlIsOn ? "<color=green>On" : "<color=red>Off";
+            txtAutoControl.text = string.Concat("Auto ", currentControlStatus);
+        }
         public void DisableAutoControlButton() => btnAutoControl.gameObject.SetActive(false);
         public void ShowTargetingFighterInterface()
         {

@@ -22,21 +22,28 @@ namespace BattleSystem
         void OnEnable()
         {
             battleManager.onFightersOrderOrStatusChanged += battleInterface.RefreshFightersOrderListInterface;
+            battleManager.onFightersPositionsSetUp += battleCamera.RefreshArenaCenterPoint;
 
             
             battleManager.onControllableTurnStarted += battleInterface.ShowControllableTurnInterface;
             battleManager.onAutomaticTurnStarted += battleInterface.ShowAutomaticTurnInterface;
+            battleManager.onEnemyTurnStarted += battleInterface.DisableAutoControlButton;
+            battleManager.onAutoControlButtonDisplayedOrRefreshed += battleInterface.RefreshAutoControlButtonStatus;
 
-            battleManager.onChoosingOrWaitingAction += battleCamera.StartCameraBehavior;
+            battleManager.onMainPhaseStarted_ChoosingOrWaitingAction += battleCamera.StartCameraBehavior;
+            battleManager.onMainPhaseStarted_ChoosingOrWaitingAction += battleInterface.EnableAutoControlButton;
 
             battleManager.onAttackButtonSelected += battleInterface.ShowTargetingFighterInterface;
 
             battleManager.onTargetingFightersStarted += targetSystem.EnableTargeting;
             battleManager.onTargetingFightersStarted += battleCamera.GeneralVision;
+            battleManager.onTargetingFightersStarted += battleInterface.DisableAutoControlButton;
+
 
             battleManager.onTargetingFightersFinished += targetSystem.DisableTargeting;
 
             battleManager.onActionProcessStarted += battleCamera.GeneralVision;
+            battleManager.onActionProcessStarted += battleInterface.DisableAutoControlButton;
 
             battleManager.onFighterActionHappening += battleInterface.ShowFighterActingMessage;
 

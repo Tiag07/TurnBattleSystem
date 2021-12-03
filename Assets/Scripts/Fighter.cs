@@ -7,7 +7,7 @@ public class Fighter : MonoBehaviour
     [SerializeField] FighterData fighterData;
     [SerializeField] public string originalName { get; private set; }
     [SerializeField] public string nickName;
-    [SerializeField] public string currentLevel;
+    [SerializeField] public string currentLevel; /**not used still*/
     [SerializeField] public int maxHp { get; private set; }
     [SerializeField] public int currentHp { get; private set; }
     [SerializeField] public int attack { get; private set; }
